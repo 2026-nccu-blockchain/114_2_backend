@@ -1,4 +1,6 @@
-# HOTEL System
+# SSSplatform
+
+### Please refer to this [api document](https://hackmd.io/@jasmineCCH/BkbG1EiR-e) for more information
 
 ## Setup
 
@@ -35,6 +37,3 @@ please check env is already rewriten
 ```bash
 uvicorn app.main:app --reload
 ```
-
-
-testing2
