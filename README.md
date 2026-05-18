@@ -37,3 +37,6 @@ please check env is already rewriten
 ```bash
 uvicorn app.main:app --reload
 ```
+## Cloudinary api
+We use [Cloudinary](https://cloudinary.com/) api to upload image and change it to url.  
+You need a Cloudinary account to complete .env.
