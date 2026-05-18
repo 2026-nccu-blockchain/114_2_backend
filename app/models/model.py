@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, DECIMAL, Date, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, DECIMAL, Double, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base import Base
@@ -27,6 +27,7 @@ class Admin(Base):
     email = Column(String(255), nullable=False)
     hash_password = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
+    avatar_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102740/default_avatar_zzz4vt.png")
     is_first_login = Column(Boolean, nullable=False, default=False)
     is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
@@ -53,6 +54,7 @@ class Buyer(Base):
     name = Column(String(20), nullable=False)
     phone = Column(String(10), nullable=False)
     address = Column(String(255), nullable=False)
+    avatar_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102740/default_avatar_zzz4vt.png")
     is_first_login = Column(Boolean, nullable=False, default=False)
     is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
@@ -80,6 +82,7 @@ class Seller(Base):
     hash_password = Column(String(255), nullable=False)
     name = Column(String(20), nullable=False)
     phone = Column(String(10), nullable=False)
+    avatar_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102740/default_avatar_zzz4vt.png")
     company_name = Column(String(255), nullable=False)
     company_phone = Column(String(10), nullable=False)
     company_address = Column(String(255), nullable=False)
@@ -111,6 +114,7 @@ class Driver(Base):
     hash_password = Column(String(255), nullable=False)
     name = Column(String(20), nullable=False)
     phone = Column(String(10), nullable=False)
+    avatar_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102740/default_avatar_zzz4vt.png")
     is_first_login = Column(Boolean, nullable=False, default=False)
     is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
@@ -134,14 +138,15 @@ class Product(Base):
     __tablename__ = "products"
 
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
-    p_id = Column(String(10), nullable=False)
+    pid = Column(String(10), nullable=False)
     name = Column(String(255), nullable=False)
-    price = Column(DECIMAL(10, 2), nullable=False)
+    price = Column(Double, nullable=False)
     stock = Column(Integer, nullable=False)
     status = Column(Boolean, nullable=False)
     seller_id = Column(String(36), ForeignKey("sellers.id"))
     desc = Column(Text, nullable=False)
     type = Column(String(255), nullable=False)
+    product_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png")
     create_time = Column(DateTime(timezone=True), server_default=func.now())
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -152,7 +157,7 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
-    o_id = Column(String(10), nullable=False)
+    oid = Column(String(36), nullable=False)
     buyer_id = Column(String(36), ForeignKey("buyers.id"))
     seller_id = Column(String(36), ForeignKey("sellers.id"))
     driver_id = Column(String(36), ForeignKey("drivers.id"))
@@ -172,7 +177,7 @@ class SelledProduct(Base):
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
     product_id = Column(String(36), ForeignKey("products.id"))
     name = Column(String(255), nullable=False)
-    price = Column(DECIMAL(10, 2), nullable=False)
+    price = Column(Double, nullable=False)
     count = Column(Integer, nullable=False)
     order_id = Column(String(36), ForeignKey("orders.id"))
 
