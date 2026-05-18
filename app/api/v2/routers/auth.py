@@ -8,6 +8,6 @@ from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
 from app.core.jwt import create_access_token
-from app.core.deps import verify_token_return_payload
+from app.core.deps import verify_token
 
 router = APIRouter()
