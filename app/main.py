@@ -4,7 +4,7 @@ from datetime import datetime
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from app.api.v1.router import api_router
+from app.api.v2.router import api_router
 from app.db.session import init_db
 from app.core.exceptions import APIException
 from app.schemas.common import ErrorResponse
