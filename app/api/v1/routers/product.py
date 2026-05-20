@@ -4,12 +4,17 @@ from datetime import datetime
 
 from app.db.session import get_db
 from app.schemas.common import APIResponse
+from app.schemas.product import ProductCreateRequest, ProductUpdateRequest
 
 router = APIRouter()
 
 
 @router.post("/add")
-def add_product(db: Session = Depends(get_db)) -> dict:
+def add_product(
+    data: ProductCreateRequest,
+    db: Session = Depends(get_db)
+) -> dict:
+
     return APIResponse(
         status_code="00000",
         desc="product created",
@@ -18,7 +23,12 @@ def add_product(db: Session = Depends(get_db)) -> dict:
 
 
 @router.put("/{ProductId}")
-def update_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
+def update_product(
+    ProductId: int,
+    data: ProductUpdateRequest,
+    db: Session = Depends(get_db)
+) -> dict:
+
     return APIResponse(
         status_code="00000",
         desc="product updated",
@@ -28,6 +38,7 @@ def update_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
 
 @router.delete("/{ProductId}")
 def delete_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
+
     return APIResponse(
         status_code="00000",
         desc="product deleted",
@@ -37,6 +48,7 @@ def delete_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
 
 @router.get("/{ProductId}")
 def get_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
+
     return APIResponse(
         status_code="00000",
         desc="get single product",
@@ -46,6 +58,7 @@ def get_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
 
 @router.get("/me")
 def get_my_products(db: Session = Depends(get_db)) -> dict:
+
     return APIResponse(
         status_code="00000",
         desc="get my products",

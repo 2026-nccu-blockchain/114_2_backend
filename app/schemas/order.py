@@ -1,13 +1,19 @@
 from pydantic import BaseModel
+from typing import List
 
 
 class OrderCreateRequest(BaseModel):
-    product_id: int
-    quantity: int
+    buyer_id: str
+    seller_id: str
+    to_addr: str
+    order_status: str
+    product_id: List[str]
+    count: List[int]
 
 
-class OrderResponse(BaseModel):
-    order_id: int
-    product_id: int
-    quantity: int
-    total_price: int
+class DriverTakeOrderRequest(BaseModel):
+    driver_id: str
+
+
+class OrderUpdateStatusRequest(BaseModel):
+    status: str
