@@ -29,11 +29,19 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10002", "invalid password")
     payload = {"email": f"{data.email}", "role": "admin"}
     token = create_access_token(payload)
+    is_first_login = False
+    if user.is_first_login == True:
+        user.is_first_login = False
+        db.commit()
+        db.refresh(user)
+        is_first_login = True
+    
     return APIResponse(
         status_code="00000",
         message="success",
         response_datetime=datetime.utcnow(),
         token=token,
+        is_first_login=is_first_login
     )
 
 
@@ -119,11 +127,18 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10002", "invalid password")
     payload = {"email": f"{data.email}", "role": "seller"}
     token = create_access_token(payload)
+    is_first_login = False
+    if user.is_first_login == True:
+        user.is_first_login = False
+        db.commit()
+        db.refresh(user)
+        is_first_login = True
     return APIResponse(
         status_code="00000",
         message="success",
         response_datetime=datetime.utcnow(),
         token=token,
+        is_first_login=is_first_login
     )
 
 
@@ -169,11 +184,18 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10002", "invalid password")
     payload = {"email": f"{data.email}", "role": "driver"}
     token = create_access_token(payload)
+    is_first_login = False
+    if user.is_first_login == True:
+        user.is_first_login = False
+        db.commit()
+        db.refresh(user)
+        is_first_login = True
     return APIResponse(
         status_code="00000",
         message="success",
         response_datetime=datetime.utcnow(),
         token=token,
+        is_first_login=is_first_login
     )
 
 
