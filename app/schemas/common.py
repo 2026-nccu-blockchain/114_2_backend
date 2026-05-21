@@ -30,6 +30,7 @@ class APIResponse(BaseModel):
     status: Optional[bool] = None
     desc: Optional[str] = None
     type: Optional[str] = None
+    product_url: Optional[str] = None
     product: Optional[list] = None
     order_status: Optional[str] = None
     buyer_id: Optional[str] = None
