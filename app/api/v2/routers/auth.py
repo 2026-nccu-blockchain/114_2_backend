@@ -26,7 +26,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
-    payload = {"email": f"{data.email}", "role": "admin"}
+    payload = {"id": f"{user.id}", "role": "admin"}
     token = create_access_token(payload)
     is_first_login = False
     if user.is_first_login == True:
@@ -71,12 +71,12 @@ def admin_register(data: AdminRegisterRequest, db: Session = Depends(get_db)) ->
 def buyer_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     if not Buyer.verify_email(data.email):
         raise APIException(400, "10007", "incorrect email format")
-    user = db.query(Buyer).filter(Buyer.email == data.email and Buyer.is_delete == False).first()
+    user = db.query(Buyer).filter(Buyer.email == data.email, Buyer.is_delete == False).first()
     if user is None:
         raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
-    payload = {"email": f"{data.email}", "role": "buyer"}
+    payload = {"user": f"{user.id}", "role": "buyer"}
     token = create_access_token(payload)
 
     return APIResponse(
@@ -93,9 +93,9 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
         raise APIException(400, "10007", "incorrect email format")
     if not Buyer.verify_phone(data.phone):
         raise APIException(400, "10009", "incorrect phone format")
-    if db.query(Buyer).filter(Buyer.email == data.email and Buyer.is_delete == False).first() is not None:
+    if db.query(Buyer).filter(Buyer.email == data.email, Buyer.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, email has been uesd")
-    if db.query(Buyer).filter(Buyer.phone == data.phone and Buyer.is_delete == False).first() is not None:
+    if db.query(Buyer).filter(Buyer.phone == data.phone, Buyer.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, phone has been uesd")
     new_buyer = Buyer(
         email=data.email,
@@ -120,12 +120,12 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
 def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     if not Seller.verify_email(data.email):
         raise APIException(400, "10007", "incorrect email format")
-    user = db.query(Seller).filter(Seller.email == data.email and Seller.is_delete == False).first()
+    user = db.query(Seller).filter(Seller.email == data.email, Seller.is_delete == False).first()
     if user is None:
         raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
-    payload = {"email": f"{data.email}", "role": "seller"}
+    payload = {"id": f"{user.id}", "role": "seller"}
     token = create_access_token(payload)
     is_first_login = False
     if user.is_first_login == True:
@@ -149,9 +149,9 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
         raise APIException(400, "10007", "incorrect email format")
     if not Seller.verify_phone(data.phone):
         raise APIException(400, "10009", "incorrect phone format")
-    if db.query(Seller).filter(Seller.email == data.email and Seller.is_delete == False).first() is not None:
+    if db.query(Seller).filter(Seller.email == data.email, Seller.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, email has been uesd")
-    if db.query(Seller).filter(Seller.phone == data.phone and Seller.is_delete == False).first() is not None:
+    if db.query(Seller).filter(Seller.phone == data.phone, Seller.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, phone has been uesd")
     new_seller = Seller(
         email=data.email,
@@ -178,12 +178,12 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
 def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     if not Driver.verify_email(data.email):
         raise APIException(400, "10007", "incorrect email format")
-    user = db.query(Driver).filter(Driver.email == data.email and Driver.is_delete == False).first()
+    user = db.query(Driver).filter(Driver.email == data.email, Driver.is_delete == False).first()
     if user is None:
         raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
-    payload = {"email": f"{data.email}", "role": "driver"}
+    payload = {"id": f"{user.id}", "role": "driver"}
     token = create_access_token(payload)
     is_first_login = False
     if user.is_first_login == True:
@@ -207,9 +207,9 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
         raise APIException(400, "10007", "incorrect email format")
     if not Driver.verify_phone(data.phone):
         raise APIException(400, "10009", "incorrect phone format")
-    if db.query(Driver).filter(Driver.email == data.email and Driver.is_delete == False).first() is not None:
+    if db.query(Driver).filter(Driver.email == data.email, Driver.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, email has been uesd")
-    if db.query(Driver).filter(Driver.phone == data.phone and Driver.is_delete == False).first() is not None:
+    if db.query(Driver).filter(Driver.phone == data.phone, Driver.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, phone has been uesd")
     new_driver = Driver(
         email=data.email,
