@@ -19,6 +19,9 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
     # payload = return_payload(request)
     # if payload["role"] != "seller":
     #     raise APIException(403, "00004", "forbidden")
+    product = db.query(Product).filter(Product.name == data.name, Product.type == data.type, Product.is_delete == False).first()
+    if product is not None:
+        raise APIException(400, "20007", "product existed")
     new_product = Product(
         pid=f"P{int(time.time())}",
         name=data.name,
@@ -27,8 +30,10 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         status=data.status,
         # seller_id=payload["id"],
         desc=data.desc,
-        type=data.type
+        type=data.type,
     )
+    if data.product_url is not None:
+        new_product.product_url = data.product_url
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
@@ -45,7 +50,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
     # verify_token(request)
     # if return_payload(request)["role"] != "seller":
     #     raise APIException(403, "00004", "forbidden")
-    product = db.query(Product).filter(Product.pid == ProductId).first()
+    product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
     if product is None:
         raise APIException(400, "20001", "product not found")
     product.name = data.name
@@ -54,6 +59,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
     product.status = data.status
     product.desc = data.desc
     product.type = data.type
+    product.product_url = data.product_url
     db.commit()
     db.refresh(product)
 
@@ -61,11 +67,29 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
         status_code="00000",
         message="product updated",
         response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        pid=product.pid,
+        name=product.name,
+        price=product.price,
+        stock=product.stock,
+        status=product.status,
+        seller_id=product.seller_id,
+        desc=product.desc,
+        type=product.type,
+        product_url=product.product_url
     )
 
 
 @router.delete("/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
-def delete_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
+def delete_product(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
+    # verify_token(request)
+    # if return_payload(request)["role"] != "seller":
+    #     raise APIException(403, "00004", "forbidden")
+    product = db.query(Product).filter(Product.pid == ProductId and Product.is_delete == False).first()
+    if product is None:
+        raise APIException(400, "20001", "product not found")
+    product.is_delete = True
+    db.commit()
+    db.refresh(product)
 
     return APIResponse(
         status_code="00000",

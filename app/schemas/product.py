@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import Optional
 
 class ProductCreateRequest(BaseModel):
     name: str
@@ -8,6 +8,7 @@ class ProductCreateRequest(BaseModel):
     status: bool
     desc: str
     type: str
+    product_url: Optional[str] = None
 
 
 class ProductUpdateRequest(BaseModel):
@@ -17,3 +18,4 @@ class ProductUpdateRequest(BaseModel):
     status: bool
     desc: str
     type: str
+    product_url: str

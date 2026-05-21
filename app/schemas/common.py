@@ -11,6 +11,8 @@ class APIResponse(BaseModel):
     # 不加 data 欄位，或直接把要回傳的欄位寫在這層
     token: Optional[str] = None
     uuid: Optional[str] = None
+    pid: Optional[str] = None
+    oid: Optional[str] = None
     email: Optional[str] = None
     name: Optional[str] = None
     phone: Optional[str] = None

@@ -147,6 +147,7 @@ class Product(Base):
     desc = Column(Text, nullable=False)
     type = Column(String(255), nullable=False)
     product_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png")
+    is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
