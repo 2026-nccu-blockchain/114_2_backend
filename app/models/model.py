@@ -140,7 +140,7 @@ class Product(Base):
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
     pid = Column(String(10), nullable=False)
     name = Column(String(255), nullable=False)
-    price = Column(Double, nullable=False)
+    price = Column(DECIMAL(10, 2), nullable=False)
     stock = Column(Integer, nullable=False)
     status = Column(Boolean, nullable=False)
     seller_id = Column(String(36), ForeignKey("sellers.id"))
@@ -151,7 +151,7 @@ class Product(Base):
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     seller = relationship("Seller", back_populates="products")
-    selled_product = relationship("OrderItem", back_populates="product")
+    selled_product = relationship("SelledProduct", back_populates="product")
 
 class Order(Base):
     __tablename__ = "orders"
@@ -177,7 +177,7 @@ class SelledProduct(Base):
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
     product_id = Column(String(36), ForeignKey("products.id"))
     name = Column(String(255), nullable=False)
-    price = Column(Double, nullable=False)
+    price = Column(DECIMAL(10, 2), nullable=False)
     count = Column(Integer, nullable=False)
     order_id = Column(String(36), ForeignKey("orders.id"))
 
