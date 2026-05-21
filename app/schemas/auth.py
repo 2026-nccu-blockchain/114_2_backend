@@ -2,23 +2,23 @@ from pydantic import BaseModel, EmailStr
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 class AdminRegisterRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     name: str
 
 class BuyerRegisterRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     phone: str
     name: str
     address: str
 
 class SellerRegisterRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     phone: str
     name: str
@@ -27,7 +27,7 @@ class SellerRegisterRequest(BaseModel):
     company_name: str
 
 class DriverRegisterRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
     phone: str
     name: str

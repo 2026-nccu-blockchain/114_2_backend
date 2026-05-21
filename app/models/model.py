@@ -73,6 +73,11 @@ class Buyer(Base):
     def verify_email(email: str) -> bool:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @staticmethod
+    def verify_phone(phone: str) -> bool:
+        phone_regex = r"^09\d{8}$"
+        return re.match(phone_regex, phone) is not None
 
 class Seller(Base):
     __tablename__ = "sellers"
@@ -105,6 +110,11 @@ class Seller(Base):
     def verify_email(email: str) -> bool:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @staticmethod
+    def verify_phone(phone: str) -> bool:
+        phone_regex = r"^09\d{8}$"
+        return re.match(phone_regex, phone) is not None
 
 class Driver(Base):
     __tablename__ = "drivers"
@@ -133,6 +143,11 @@ class Driver(Base):
     def verify_email(email: str) -> bool:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @staticmethod
+    def verify_phone(phone: str) -> bool:
+        phone_regex = r"^09\d{8}$"
+        return re.match(phone_regex, phone) is not None
 
 class Product(Base):
     __tablename__ = "products"
