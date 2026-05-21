@@ -1,7 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
-
-class AdminResponse(BaseModel):
-    admin_id: int
+class AdminUpdateRequest(BaseModel):
+    email: EmailStr
     name: str
-    email: str
+    avatar_url: str

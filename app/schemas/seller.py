@@ -9,11 +9,3 @@ class SellerUpdateRequest(BaseModel):
     company_phone: Optional[str] = None
     company_address: Optional[str] = None
 
-
-class SellerResponse(BaseModel):
-    seller_id: int
-    name: str
-    phone: str
-    company_name: str
-    company_phone: str
-    company_address: str
