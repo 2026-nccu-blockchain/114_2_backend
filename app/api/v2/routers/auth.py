@@ -160,15 +160,44 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
 
 @router.post("/driver/login", response_model=APIResponse, response_model_exclude_none=True)
 def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
+    if not Driver.verify_email(data.email):
+        raise APIException(400, "10007", "incorrect email format")
+    user = db.query(Driver).filter(Driver.email == data.email and Driver.is_delete == False).first()
+    if user is None:
+        raise APIException(400, "10001", "user not found")
+    if not user.verify_password(data.password):
+        raise APIException(400, "10002", "invalid password")
+    payload = {"email": f"{data.email}", "role": "driver"}
+    token = create_access_token(payload)
     return APIResponse(
         status_code="00000",
         message="success",
         response_datetime=datetime.utcnow(),
+        token=token,
     )
 
 
 @router.post("/driver/register", response_model=APIResponse, response_model_exclude_none=True)
 def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) -> dict:
+    if not Driver.verify_email(data.email):
+        raise APIException(400, "10007", "incorrect email format")
+    if not Driver.verify_phone(data.phone):
+        raise APIException(400, "10009", "incorrect phone format")
+    if db.query(Driver).filter(Driver.email == data.email and Driver.is_delete == False).first() is not None:
+        raise APIException(400, "10006", "register duplicate, email has been uesd")
+    if db.query(Driver).filter(Driver.phone == data.phone and Driver.is_delete == False).first() is not None:
+        raise APIException(400, "10006", "register duplicate, phone has been uesd")
+    new_driver = Driver(
+        email=data.email,
+        hash_password=" ", #不能是null，下面才會設密碼
+        name=data.name,
+        phone=data.phone
+    )
+    new_driver.set_password(data.password)
+    db.add(new_driver)
+    db.commit()
+    db.refresh(new_driver)
+
     return APIResponse(
         status_code="00000",
         message="success",
