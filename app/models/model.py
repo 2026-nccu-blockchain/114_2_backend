@@ -35,10 +35,10 @@ class Admin(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
@@ -64,10 +64,10 @@ class Buyer(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
@@ -96,10 +96,10 @@ class Seller(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
@@ -124,10 +124,10 @@ class Driver(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
@@ -151,7 +151,7 @@ class Product(Base):
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     seller = relationship("Seller", back_populates="products")
-    selled_product = relationship("OrderItem", back_populates="product")
+    selled_product = relationship("SelledProduct", back_populates="product")
 
 class Order(Base):
     __tablename__ = "orders"
