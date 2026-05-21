@@ -110,15 +110,47 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
 
 @router.post("/seller/login", response_model=APIResponse, response_model_exclude_none=True)
 def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
+    if not Seller.verify_email(data.email):
+        raise APIException(400, "10007", "incorrect email format")
+    user = db.query(Seller).filter(Seller.email == data.email and Seller.is_delete == False).first()
+    if user is None:
+        raise APIException(400, "10001", "user not found")
+    if not user.verify_password(data.password):
+        raise APIException(400, "10002", "invalid password")
+    payload = {"email": f"{data.email}", "role": "seller"}
+    token = create_access_token(payload)
     return APIResponse(
         status_code="00000",
         message="success",
         response_datetime=datetime.utcnow(),
+        token=token,
     )
 
 
 @router.post("/seller/register", response_model=APIResponse, response_model_exclude_none=True)
 def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) -> dict:
+    if not Seller.verify_email(data.email):
+        raise APIException(400, "10007", "incorrect email format")
+    if not Seller.verify_phone(data.phone):
+        raise APIException(400, "10009", "incorrect phone format")
+    if db.query(Seller).filter(Seller.email == data.email and Seller.is_delete == False).first() is not None:
+        raise APIException(400, "10006", "register duplicate, email has been uesd")
+    if db.query(Seller).filter(Seller.phone == data.phone and Seller.is_delete == False).first() is not None:
+        raise APIException(400, "10006", "register duplicate, phone has been uesd")
+    new_seller = Seller(
+        email=data.email,
+        hash_password=" ", #不能是null，下面才會設密碼
+        name=data.name,
+        phone=data.phone,
+        company_name=data.company_name,
+        company_phone=data.company_phone,
+        company_address=data.company_address
+    )
+    new_seller.set_password(data.password)
+    db.add(new_seller)
+    db.commit()
+    db.refresh(new_seller)
+
     return APIResponse(
         status_code="00000",
         message="success",
