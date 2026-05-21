@@ -5,9 +5,8 @@ from app.db.session import get_db
 from app.models.model import Admin, Buyer, Seller, Driver
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.core.jwt import create_access_token
-from app.core.deps import verify_token
 from app.schemas.auth import (
     LoginRequest,
     AdminRegisterRequest,
@@ -39,7 +38,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
         is_first_login=is_first_login
     )
@@ -64,7 +63,7 @@ def admin_register(data: AdminRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
 
 
@@ -79,10 +78,11 @@ def buyer_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10002", "invalid password")
     payload = {"email": f"{data.email}", "role": "buyer"}
     token = create_access_token(payload)
+
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
     )
 
@@ -112,7 +112,7 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
 
 
@@ -133,10 +133,11 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         db.commit()
         db.refresh(user)
         is_first_login = True
+
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
         is_first_login=is_first_login
     )
@@ -169,7 +170,7 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
 
 
@@ -190,10 +191,11 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         db.commit()
         db.refresh(user)
         is_first_login = True
+        
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
         is_first_login=is_first_login
     )
@@ -223,5 +225,5 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow(),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
