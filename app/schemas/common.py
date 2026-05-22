@@ -43,6 +43,8 @@ class APIResponse(BaseModel):
     order: Optional[list] = None
     is_first_login: Optional[bool] = None
     # 其他欄位依需求加
+    product_id: Optional[str] = None
+    product_name: Optional[str] = None
     
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):

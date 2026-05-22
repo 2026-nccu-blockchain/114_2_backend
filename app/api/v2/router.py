@@ -20,5 +20,5 @@ api_router.include_router(driver.router, prefix="/api/v2/driver", tags=["driver"
 api_router.include_router(order.router, prefix="/api/v2/order", tags=["order"])
 api_router.include_router(other.router, prefix="/api/v2", tags=["other"])
 api_router.include_router(product.router, prefix="/api/v2/product", tags=["product"])
-api_router.include_router(seller.router, prefix="/api/v2/seller", tags=["health"])
+api_router.include_router(seller.router, prefix="/api/v2/seller", tags=["seller"])
 

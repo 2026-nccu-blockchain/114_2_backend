@@ -10,3 +10,11 @@ from datetime import datetime
 from app.core.deps import verify_token
 
 router = APIRouter()
+
+@router.get("/")
+def get_admin(db: Session = Depends(get_db)) -> dict:
+    return APIResponse(
+        status_code="ADMIN_GET_SUCCESS",
+        desc="Admin router works",
+        response_datetime=datetime.utcnow()
+    )
