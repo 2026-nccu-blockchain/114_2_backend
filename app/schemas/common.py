@@ -38,6 +38,7 @@ class APIResponse(BaseModel):
     from_addr: Optional[str] = None
     total_price: Optional[float] = None
     order: Optional[list] = None
+    is_first_login: Optional[bool] = None
     # 其他欄位依需求加
     
 # 錯誤回應的格式 

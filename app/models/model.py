@@ -28,17 +28,17 @@ class Admin(Base):
     hash_password = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     avatar_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102740/default_avatar_zzz4vt.png")
-    is_first_login = Column(Boolean, nullable=False, default=False)
+    is_first_login = Column(Boolean, nullable=False, default=True)
     is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
@@ -64,15 +64,20 @@ class Buyer(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @staticmethod
+    def verify_phone(phone: str) -> bool:
+        phone_regex = r"^09\d{8}$"
+        return re.match(phone_regex, phone) is not None
 
 class Seller(Base):
     __tablename__ = "sellers"
@@ -86,7 +91,7 @@ class Seller(Base):
     company_name = Column(String(255), nullable=False)
     company_phone = Column(String(10), nullable=False)
     company_address = Column(String(255), nullable=False)
-    is_first_login = Column(Boolean, nullable=False, default=False)
+    is_first_login = Column(Boolean, nullable=False, default=True)
     is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
@@ -96,15 +101,20 @@ class Seller(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @staticmethod
+    def verify_phone(phone: str) -> bool:
+        phone_regex = r"^09\d{8}$"
+        return re.match(phone_regex, phone) is not None
 
 class Driver(Base):
     __tablename__ = "drivers"
@@ -115,7 +125,7 @@ class Driver(Base):
     name = Column(String(20), nullable=False)
     phone = Column(String(10), nullable=False)
     avatar_url = Column(String(255), nullable=False, default="https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102740/default_avatar_zzz4vt.png")
-    is_first_login = Column(Boolean, nullable=False, default=False)
+    is_first_login = Column(Boolean, nullable=False, default=True)
     is_delete = Column(Boolean, nullable=False, default=False)
     create_time = Column(DateTime(timezone=True), server_default=func.now())
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
@@ -124,15 +134,20 @@ class Driver(Base):
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
-        self.hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+        self.hash_password = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
     def verify_password(self, plain_password: str) -> bool:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hashed_password.encode('utf-8'))
+        return bcrypt.checkpw(plain_password.encode('utf-8'), self.hash_password.encode('utf-8'))
     
     @staticmethod
     def verify_email(email: str) -> bool:
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @staticmethod
+    def verify_phone(phone: str) -> bool:
+        phone_regex = r"^09\d{8}$"
+        return re.match(phone_regex, phone) is not None
 
 class Product(Base):
     __tablename__ = "products"
@@ -151,7 +166,7 @@ class Product(Base):
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     seller = relationship("Seller", back_populates="products")
-    selled_product = relationship("OrderItem", back_populates="product")
+    selled_product = relationship("SelledProduct", back_populates="product")
 
 class Order(Base):
     __tablename__ = "orders"

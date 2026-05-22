@@ -1,7 +1,4 @@
 from fastapi import APIRouter, UploadFile, Request
-from fastapi import Depends
-from sqlalchemy.orm import Session
-# from app.schemas.other import
 from app.db.session import get_db
 from app.models.model import Admin, Buyer, Seller, Driver
 from app.core.exceptions import APIException
@@ -21,7 +18,7 @@ ALLOWED_IMAGE_TYPES = [
 
 @router.post("/upload", response_model=APIResponse, response_model_exclude_none=True)
 async def handle_upload(request: Request, image: UploadFile):
-    # verify_token(request)
+    verify_token(request)
     if image.content_type not in ALLOWED_IMAGE_TYPES:
         raise APIException(400, "40001", "upload not an image")
     try:
