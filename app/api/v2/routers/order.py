@@ -1,15 +1,19 @@
-<<<<<<< HEAD:app/api/v1/routers/order.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
-
 from app.db.session import get_db
 from app.schemas.common import APIResponse
+from app.models.model import Order, SelledProduct
+from app.core.exceptions import APIException
+from app.core.deps import verify_token
 from app.schemas.order import (
     OrderCreateRequest,
     DriverTakeOrderRequest,
     OrderUpdateStatusRequest,
 )
+
+
+
 
 router = APIRouter()
 
@@ -90,17 +94,3 @@ def update_order_status(
         desc="order updated",
         response_datetime=datetime.utcnow(),
     )
-=======
-from fastapi import APIRouter
-from fastapi import Depends
-from sqlalchemy.orm import Session
-# from app.schemas.order import
-from app.db.session import get_db
-from app.models.model import Order, SelledProduct
-from app.core.exceptions import APIException
-from app.schemas.common import APIResponse
-from datetime import datetime
-from app.core.deps import verify_token
-
-router = APIRouter()
->>>>>>> origin/develop:app/api/v2/routers/order.py

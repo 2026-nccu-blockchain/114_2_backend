@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
-<<<<<<< HEAD:app/api/v1/routers/auth.py
 
 from app.db.session import get_db
 from app.schemas.common import APIResponse
+from app.core.jwt import create_access_token
+from app.core.deps import verify_token_return_payload
 from app.schemas.auth import (
     LoginRequest,
     AdminRegisterRequest,
@@ -12,10 +13,6 @@ from app.schemas.auth import (
     SellerRegisterRequest,
     DriverRegisterRequest,
 )
-=======
-from app.core.jwt import create_access_token
-from app.core.deps import verify_token_return_payload
->>>>>>> origin/develop:app/api/v2/routers/example.txt
 
 router = APIRouter()
 
