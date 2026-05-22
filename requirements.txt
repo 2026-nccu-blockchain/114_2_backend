@@ -7,3 +7,6 @@ python-dotenv
 email-validator
 PyJWT
 bcrypt
+cloudinary
+python-multipart
+sqlite_web
