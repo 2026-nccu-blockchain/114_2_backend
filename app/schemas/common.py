@@ -13,6 +13,8 @@ class APIResponse(BaseModel):
     username: Optional[str] = None
     access_token: Optional[str] = None
     # 其他欄位依需求加
+    product_id: Optional[str] = None
+    product_name: Optional[str] = None
     
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):

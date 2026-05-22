@@ -135,8 +135,7 @@ class Product(Base):
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     seller = relationship("Seller", back_populates="products")
-    selled_product = relationship("OrderItem", back_populates="product")
-
+    selled_product = relationship("SelledProduct", back_populates="product")
 class Order(Base):
     __tablename__ = "orders"
 

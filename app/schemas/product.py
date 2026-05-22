@@ -6,6 +6,7 @@ class ProductCreateRequest(BaseModel):
     price: float
     stock: int
     status: bool
+    seller_id: str
     desc: str
     type: str
 
