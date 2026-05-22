@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
-from app.models.model import Product
+from app.models.model import Product, SelledProduct
 from app.db.session import get_db
 from app.schemas.common import APIResponse
 from app.schemas.product import ProductCreateRequest, ProductUpdateRequest
 from app.core.exceptions import APIException
+from app.core.deps import verify_token
 import uuid
-router = APIRouter()
-
 
 @router.post("/add")
 def add_product(
