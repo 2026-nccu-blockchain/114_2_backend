@@ -7,7 +7,7 @@ from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime, timedelta
 from app.core.deps import verify_token, return_payload
-from app.schemas.product import ProductCreateRequest, ProductUpdateRequest
+from app.schemas.product import ProductCreateRequest, ProductUpdateRequest, ProductTypeCreateRequest
 from decimal import Decimal, ROUND_HALF_UP
 from snowflake import SnowflakeGenerator
 import pytz
@@ -44,6 +44,7 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         status_code="00000",
         message="product created",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        uuid=new_product.id,
         pid=new_product.pid,
         name=new_product.name,
         price=new_product.price,
@@ -53,6 +54,52 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         desc=new_product.desc,
         type=new_product.type,
         product_url=new_product.product_url
+    )
+
+@router.post("/add/type/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
+def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRequest, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "seller":
+        raise APIException(403, "00004", "forbidden")
+    product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
+    if product is None:
+        raise APIException(400, "20001", "product not found")
+    if product.seller_id != payload["id"]:
+        raise APIException(403, "00004", "forbidden")
+    same_product = db.query(Product).filter(Product.pid == ProductId, Product.type == data.type, Product.is_delete == False).first()
+    if same_product is not None:
+        raise APIException(400, "20007", "product existed")
+    new_product_type = Product(
+        pid=ProductId,
+        name=product.name,
+        price=Decimal(data.price).quantize(Decimal("0.00")),
+        stock=data.stock,
+        status=data.status,
+        seller_id=payload["id"],
+        desc=data.desc,
+        type=data.type,
+    )
+    if data.product_url is not None:
+        new_product_type.product_url = data.product_url
+    db.add(new_product_type)
+    db.commit()
+    db.refresh(new_product_type)
+
+    return APIResponse(
+        status_code="00000",
+        message="product created",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        uuid=new_product_type.id,
+        pid=new_product_type.pid,
+        name=new_product_type.name,
+        price=new_product_type.price,
+        stock=new_product_type.stock,
+        status=new_product_type.status,
+        seller_id=new_product_type.seller_id,
+        desc=new_product_type.desc,
+        type=new_product_type.type,
+        product_url=new_product_type.product_url
     )
 
 
