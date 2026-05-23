@@ -2,11 +2,11 @@
 
 ## API Version
 
-* version: v2.0.0
+* version: v2.1.0
 * base URL: `/api/v2`
 
 ### 說明
-本系統 API 採用版本控制方式管理，目前版本為 `v2.0.0`。  
+本系統 API 採用版本控制方式管理，目前版本為 `v2.1.0`。  
 所有 API 路由皆需加上版本前綴 `/api/v2`，以利未來功能擴充與版本維護。
 
 ## auth
@@ -40,7 +40,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "token": "ehflaueyfa73l7ylfp9rgyow3h,ulfeu'0w83",
 }
 
@@ -48,7 +48,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 管理員註冊
@@ -82,14 +82,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10006",
     "message": "account already exists",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 買家登入
@@ -122,7 +122,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "token": "ehflaueyfa73l7ylfp9rgyow3h,ulfeu'0w83"
 }
 
@@ -130,7 +130,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 買家註冊
@@ -168,14 +168,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10006",
     "message": "account already exists",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 賣家登入
@@ -208,7 +208,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "token": "ehflaueyfa73l7ylfp9rgyow3h,ulfeu'0w83"
 }
 
@@ -216,7 +216,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 新增賣家
@@ -260,14 +260,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10006",
     "message": "account already exists",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 司機登入
@@ -300,7 +300,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "token": "ehflaueyfa73l7ylfp9rgyow3h,ulfeu'0w83"
 }
 
@@ -308,7 +308,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 新增司機
@@ -345,14 +345,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10006",
     "message": "account already exists",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -377,7 +377,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "email": "123@gmail.com",
     "name": "小丁",
     "avatar_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/linkdet_1642_7600562_83721_mbxomz.jpg"
@@ -387,7 +387,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 更新管理員
@@ -427,7 +427,7 @@
 {     
     "status_code": "00000",
     "message": "driver profile updated successfully",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "email": "123@gmail.com",
     "name": "小丁",
     "avatar_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/linkdet_1642_7600562_83721_mbxomz.jpg"
@@ -436,7 +436,7 @@
 {
     "status_code": "10001",
     "message": "driver not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 查看所有買家
@@ -457,7 +457,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "buyer": [
         {
             "uuid": "2hfkofjiwkfhi345",
@@ -474,7 +474,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 查看所有賣家
@@ -495,7 +495,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "seller": [
         {
             "uuid": "2hfkofjiwkfhi345",
@@ -514,7 +514,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 查看所有司機
@@ -535,7 +535,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "seller": [
         {
             "uuid": "2hfkofjiwkfhi345",
@@ -551,7 +551,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -579,7 +579,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "uuid": "2hfkofjiwkfhi345",
     "email": "123@gmail.com",
     "phone": "0912345678",
@@ -637,7 +637,7 @@
 { 
     "status_code": "00000",
     "message": "buyer profile updated successfully",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "email": "123@gmail.com",
     "phone": "0912345678",
     "name": "小美",
@@ -648,7 +648,7 @@
 {
     "status_code": "10001",
     "message": "buyer not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 刪除買家
@@ -668,14 +668,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -705,7 +705,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "uuid": "2hfkofjiwkfhi345",
     "email": "123@gmail.com",
     "phone": "0912345678",
@@ -720,7 +720,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 更新賣家
@@ -774,7 +774,7 @@
 { 
     "status_code": "00000",
     "message": "seller profile updated successfully",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "email": "123@gmail.com",
     "phone": "0912345678",
     "name": "小美",
@@ -787,7 +787,7 @@
 {
     "status_code": "10001",
     "message": "seller not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 刪除賣家
@@ -807,14 +807,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -841,7 +841,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "uuid": "2hfkofjiwkfhi345",
     "email": "123@gmail.com",
     "phone": "0912345678",
@@ -853,7 +853,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 更新司機
@@ -896,7 +896,7 @@
 {     
     "status_code": "00000",
     "message": "driver profile updated successfully",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "email": "123@gmail.com",
     "phone": "0912345678",
     "name": "小丁",
@@ -906,7 +906,7 @@
 {
     "status_code": "10001",
     "message": "driver not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 刪除司機
@@ -926,14 +926,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -966,14 +966,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10008",
     "message": "password is not strong",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 忘記密碼
@@ -1008,14 +1008,14 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 上傳圖片
@@ -1050,7 +1050,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/linkdet_1642_7600562_83721_mbxomz.jpg"
 }
 
@@ -1058,7 +1058,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -1069,14 +1069,15 @@
 * header: `Authorization: Bearer <token>`
 * request:
 
-|  Name  | Essential |  Type  | Description |
-|:------:|:---------:|:------:|:-----------:|
-|  name  |     v     | string |  商品名稱   |
-| price  |     v     | double |  商品價格   |
-| stock  |     v     |  int   |  商品庫存   |
-| status |     v     |  bool  |  可否購買   |
-|  desc  |     v     | string |  商品敘述   |
-|  type  |     v     | string |  商品類型   |
+|    Name     | Essential |  Type  | Description  |
+|:-----------:|:---------:|:------:|:------------:|
+|    name     |     v     | string |   商品名稱   |
+|    price    |     v     | double |   商品價格   |
+|    stock    |     v     |  int   |   商品庫存   |
+|   status    |     v     |  bool  |   可否購買   |
+|    desc     |     v     | string |   商品敘述   |
+|    type     |     v     | string |   商品類型   |
+| product_url |           | string | 商品圖片連結 |
 ```json
 //request example
 {
@@ -1095,7 +1096,8 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
-|    uuid     |           | string |     商品ID      |
+|    uuid     |           | string |    商品uuid     |
+|     pid     |           | string |     商品ID      |
 |    name     |           | string |    商品名稱     |
 |    price    |           | double |    商品價格     |
 |    stock    |           |  int   |    商品庫存     |
@@ -1103,28 +1105,98 @@
 |  seller_id  |           | string |     賣家ID      |
 |    desc     |           | string |    商品敘述     |
 |    type     |           | string |    商品類型     |
+| product_url |           | string |  商品圖片連結   |
 ```json
 // response example
 // 成功
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
-    "uuid": "eifhluyelyal",
+    "response_datetime": "2026-03-30 21:35:30",
+    "uuid": "efrwofiefjsuefwe",
+    "pid": "P4384384513",
     "name": "rice",
     "price": 50.00,
     "stock": 20,
     "status": true,
     "seller_id": "ehl72ry8ef",
     "desc": "It's rice",
-    "type": "white"
+    "type": "white",
+    "product_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png"
 }
 
 // 失敗
 {
     "status_code": "20007",
     "message": " product existed",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
+### 賣家增加商品種類
+* http methods: POST
+* router: /api/v2/product`/add/type/{ProductId}`
+* header: `Authorization: Bearer <token>`
+* request:
+
+|    Name     | Essential |  Type  | Description  |
+|:-----------:|:---------:|:------:|:------------:|
+|    price    |     v     | double |   商品價格   |
+|    stock    |     v     |  int   |   商品庫存   |
+|   status    |     v     |  bool  |   可否購買   |
+|    desc     |     v     | string |   商品敘述   |
+|    type     |     v     | string |   商品類型   |
+| product_url |           | string | 商品圖片連結 |
+```json
+//request example
+{
+    "price": 50.00,
+    "stock": 20,
+    "status": true,
+    "desc": "It's rice",
+    "type": "white"
+}
+```
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+|    uuid     |           | string |    商品uuid     |
+|     pid     |           | string |     商品ID      |
+|    name     |           | string |    商品名稱     |
+|    price    |           | double |    商品價格     |
+|    stock    |           |  int   |    商品庫存     |
+|   status    |           |  bool  |    可否購買     |
+|  seller_id  |           | string |     賣家ID      |
+|    desc     |           | string |    商品敘述     |
+|    type     |           | string |    商品類型     |
+| product_url |           | string |  商品圖片連結   |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "uuid": "efrwofiefjsuefwe",
+    "pid": "P4384384513",
+    "name": "rice",
+    "price": 50.00,
+    "stock": 20,
+    "status": true,
+    "seller_id": "ehl72ry8ef",
+    "desc": "It's rice",
+    "type": "white",
+    "product_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png"
+}
+
+// 失敗
+{
+    "status_code": "20007",
+    "message": " product existed",
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 賣家編輯商品
@@ -1133,23 +1205,13 @@
 * header: `Authorization: Bearer <token>`
 * request:
 
-|  Name  | Essential |  Type  | Description |
-|:------:|:---------:|:------:|:-----------:|
-|  name  |     v     | string |  商品名稱   |
-| price  |     v     | double |  商品價格   |
-| stock  |     v     |  int   |  商品庫存   |
-| status |     v     |  bool  |  可否購買   |
-|  desc  |     v     | string |  商品敘述   |
-|  type  |     v     | string |  商品類型   |
+| Name | Essential |  Type  | Description |
+|:----:|:---------:|:------:|:-----------:|
+| name |     v     | string |  商品名稱   |
 ```json
 //request example
 {
-    "name": "rice",
-    "price": 50.00,
-    "stock": 20,
-    "status": true,
-    "desc": "It's rice",
-    "type": "white"
+    "name": "rice"
 }
 ```
 * response:
@@ -1159,7 +1221,59 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
-|    uuid     |           | string |     商品ID      |
+|    name     |           | string |    商品名稱     |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "pid": "P4384384513",
+    "name": "rice"
+}
+
+// 失敗
+{
+    "status_code": "10001",
+    "message": "not found",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
+### 賣家更新商品種類
+* http methods: POST
+* router: /api/v2/product`/type/{uuid}`
+* header: `Authorization: Bearer <token>`
+* request:
+
+|    Name     | Essential |  Type  | Description  |
+|:-----------:|:---------:|:------:|:------------:|
+|    price    |     v     | double |   商品價格   |
+|    stock    |     v     |  int   |   商品庫存   |
+|   status    |     v     |  bool  |   可否購買   |
+|    desc     |     v     | string |   商品敘述   |
+|    type     |     v     | string |   商品類型   |
+| product_url |     v     | string | 商品圖片連結 |
+```json
+//request example
+{
+    "price": 50.00,
+    "stock": 20,
+    "status": true,
+    "desc": "It's rice",
+    "type": "white",
+    "product_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png"
+}
+```
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+|    uuid     |           | string |    商品uuid     |
+|     pid     |           | string |     商品ID      |
 |    name     |           | string |    商品名稱     |
 |    price    |           | double |    商品價格     |
 |    stock    |           |  int   |    商品庫存     |
@@ -1167,28 +1281,31 @@
 |  seller_id  |           | string |     賣家ID      |
 |    desc     |           | string |    商品敘述     |
 |    type     |           | string |    商品類型     |
+| product_url |           | string |  商品圖片連結   |
 ```json
 // response example
 // 成功
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
-    "uuid": "3ryl73ykiw7efyla",
+    "response_datetime": "2026-03-30 21:35:30",
+    "uuid": "efrwofiefjsuefwe",
+    "pid": "P4384384513",
     "name": "rice",
     "price": 50.00,
     "stock": 20,
     "status": true,
     "seller_id": "ehl72ry8ef",
     "desc": "It's rice",
-    "type": "white"
+    "type": "white",
+    "product_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png"
 }
 
 // 失敗
 {
-    "status_code": "10001",
-    "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "status_code": "20007",
+    "message": " product existed",
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 賣家刪除商品
@@ -1208,19 +1325,19 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
-### 查看商品
-* http methods: GET
-* router: /api/v2/product`/{ProductId}`
+### 賣家刪除商品類型
+* http methods: DELETE
+* router: /api/v2/product`/type/{uuid}`
 * header: `Authorization: Bearer <token>`
 * response:
 
@@ -1229,41 +1346,25 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
-|    uuid     |           | string |       id        |
-|    name     |           | string |    商品名稱     |
-|    price    |           | double |    商品價格     |
-|    stock    |           |  int   |    商品庫存     |
-|   status    |           |  bool  |    可否購買     |
-|  seller_id  |           | string |     賣家ID      |
-|    desc     |           | string |    商品敘述     |
-|    type     |           | string |    商品類型     |
 ```json
 // response example
 // 成功
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
-    "uuid": "eifhluyelyal",
-    "name": "rice",
-    "price": 50.00,
-    "stock": 20,
-    "status": true,
-    "seller_id": "ehl72ry8ef",
-    "desc": "It's rice",
-    "type": "white"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 
 // 失敗
 {
-    "status_code": "20001",
-    "message": "product not found",
-    "datetime": "2026-03-30 21:35:30"
+    "status_code": "10001",
+    "message": "not found",
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
-### 列出使用者所有商品(買家、賣家、司機)
+### 查看商品
 * http methods: GET
-* router: /api/v2/product`/me`
+* router: /api/v2/product`/{ProductId}`
 * header: `Authorization: Bearer <token>`
 * response:
 
@@ -1279,17 +1380,62 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "product": [
         {
-            "uuid": "eifhluyelyal",
+            "uuid": "efloiehflawefl",
+            "pid": "P4384384513",
             "name": "rice",
             "price": 50.00,
             "stock": 20,
             "status": true,
             "seller_id": "ehl72ry8ef",
             "desc": "It's rice",
-            "type": "white"
+            "type": "white",
+            "product_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png"
+        }
+    ]
+    
+}
+
+// 失敗
+{
+    "status_code": "20001",
+    "message": "product not found",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
+### 列出使用者所有商品(買家、賣家、司機)
+* http methods: GET
+* router: /api/v2/product
+* header: `Authorization: Bearer <token>`
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+|   product   |           |  list  |    商品陣列     |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "product": [
+        {
+            "uuid": "efloiehflawefl",
+            "pid": "P4384384513",
+            "name": "rice",
+            "price": 50.00,
+            "stock": 20,
+            "status": true,
+            "seller_id": "ehl72ry8ef",
+            "desc": "It's rice",
+            "type": "white",
+            "product_url": "https://res.cloudinary.com/dg4uvp9rv/image/upload/v1779102750/default_product_mmix3v.png"
         }
     ]
 }
@@ -1298,7 +1444,7 @@
 {
     "status_code": "10001",
     "message": "not found",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -1348,7 +1494,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "order_id": "wu3ry37ry73awueff",
     "buyer_id": "38ylw3yp9fwous0",
     "seller_id": "efu;83uf;8w",
@@ -1392,7 +1538,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "order": [
         {
             "order_id": "euf8ya37r",
@@ -1420,7 +1566,7 @@
 {
     "status_code": "00001",
     "message": "fail",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 司機接未接訂單
@@ -1460,7 +1606,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "order_id": "38ylw3wr39dous0",
     "buyer_id": "38ylw3yp9fwous0",
     "seller_id": "efu;83uf;8w",
@@ -1485,7 +1631,7 @@
 {
     "status_code": "00001",
     "message": "fail",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 查看訂單(司機、賣家、買家)
@@ -1514,7 +1660,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "order_id": "wu3ry37ry73awueff",
     "buyer_id": "38ylw3yp9fwous0",
     "seller_id": "efu;83uf;8w",
@@ -1539,7 +1685,7 @@
 {
     "status_code": "30001",
     "message": "query no data",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 列出所有訂單
@@ -1560,7 +1706,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "order": [
         {
             "order_id": "euf8ya37r",
@@ -1589,7 +1735,7 @@
 {
     "status_code": "00001",
     "message": "fail",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 更改訂單狀態
@@ -1629,7 +1775,7 @@
 {
     "status_code": "00000",
     "message": "success",
-    "datetime": "2026-03-30 21:35:30",
+    "response_datetime": "2026-03-30 21:35:30",
     "order_id": "wu3ry37ry73awueff",
     "buyer_id": "38ylw3yp9fwous0",
     "seller_id": "efu;83uf;8w",
@@ -1654,7 +1800,7 @@
 {
     "status_code": "00001",
     "message": "fail",
-    "datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30"
 }
 ```
 ---
@@ -1693,7 +1839,7 @@
 | 10006       | register_duplicate     | 帳號已存在    |
 | 10007       | incorrect_email_format | email格式錯誤 |
 | 10008       | password_is_not_strong | 密碼強度不夠  |
-| 10009       | logout_failed          | 登出失敗      |
+| 10009       | incorrect_phone_format | phone格式錯誤 |
 
 ---
 
@@ -1708,6 +1854,7 @@
 | 20005       | refund_denied        | 退款被拒絕   |
 | 20006       | refund_processed     | 已退款       |
 | 20007       | product_existed      | 商品已存在   |
+| 20008       | add_product_fail     | 新增商品失敗 |
 
 ---
 
