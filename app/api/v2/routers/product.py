@@ -1,15 +1,14 @@
-from fastapi import APIRouter, Request
-from fastapi import Depends
+from fastapi import APIRouter, Request, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.models.model import Product, SelledProduct
+from app.models.model import Product
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
-from datetime import datetime, timedelta
+from datetime import datetime
 from app.core.deps import verify_token, return_payload
 from app.schemas.product import ProductCreateRequest, ProductUpdateRequest, ProductTypeCreateRequest, ProductTypeUpdateRequest
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal
 from snowflake import SnowflakeGenerator
 import pytz
 

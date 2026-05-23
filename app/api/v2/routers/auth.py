@@ -1,5 +1,4 @@
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.model import Admin, Buyer, Seller, Driver
@@ -14,6 +13,7 @@ from app.schemas.auth import (
     SellerRegisterRequest,
     DriverRegisterRequest,
 )
+import pytz
 
 router = APIRouter()
 
@@ -38,7 +38,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
         is_first_login=is_first_login
     )
@@ -63,7 +63,7 @@ def admin_register(data: AdminRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 
@@ -82,7 +82,7 @@ def buyer_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
     )
 
@@ -112,7 +112,7 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 
@@ -137,7 +137,7 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
         is_first_login=is_first_login
     )
@@ -170,7 +170,7 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 
@@ -195,7 +195,7 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
         is_first_login=is_first_login
     )
