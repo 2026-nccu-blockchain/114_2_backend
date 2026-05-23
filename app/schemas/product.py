@@ -20,6 +20,8 @@ class ProductTypeCreateRequest(BaseModel):
 
 class ProductUpdateRequest(BaseModel):
     name: str
+
+class ProductTypeUpdateRequest(BaseModel):
     price: float
     stock: int
     status: bool
