@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from app.schemas.product import ProductResponse
 
 
 # 合法請求的回應格式
@@ -31,7 +32,7 @@ class APIResponse(BaseModel):
     desc: Optional[str] = None
     type: Optional[str] = None
     product_url: Optional[str] = None
-    product: Optional[list] = None
+    product: Optional[list[ProductResponse]] = None
     order_status: Optional[str] = None
     buyer_id: Optional[str] = None
     seller_id: Optional[str] = None

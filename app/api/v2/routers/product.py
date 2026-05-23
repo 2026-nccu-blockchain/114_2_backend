@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi import Depends
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.model import Product, SelledProduct
@@ -214,25 +215,20 @@ def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_d
 
 
 @router.get("/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
-def get_product(ProductId: int, db: Session = Depends(get_db)) -> dict:
-    # verify_token(request)
-    product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
-    if product is None:
+def get_product(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
+                  ).where(Product.pid == ProductId, Product.is_delete == False)
+    products = db.execute(stmt).mappings().all()
+    if not products:
         raise APIException(400, "20001", "product not found")
+    
 
     return APIResponse(
         status_code="00000",
         message="get single product",
         response_datetime=datetime.utcnow() +  timedelta(hours=8),
-        pid=product.pid,
-        name=product.name,
-        price=product.price,
-        stock=product.stock,
-        status=product.status,
-        seller_id=product.seller_id,
-        desc=product.desc,
-        type=product.type,
-        product_url=product.product_url
+        product=products
     )
 
 

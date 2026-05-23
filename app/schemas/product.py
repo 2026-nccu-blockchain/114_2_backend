@@ -28,3 +28,14 @@ class ProductTypeUpdateRequest(BaseModel):
     desc: str
     type: str
     product_url: str
+
+class ProductResponse(BaseModel):
+    id: str
+    pid: str
+    name: str
+    price: float
+    stock: int
+    status: bool
+    desc: str
+    type: str
+    product_url: str
