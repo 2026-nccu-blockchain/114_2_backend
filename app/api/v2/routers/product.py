@@ -222,21 +222,42 @@ def get_product(request: Request, ProductId: str, db: Session = Depends(get_db))
     products = db.execute(stmt).mappings().all()
     if not products:
         raise APIException(400, "20001", "product not found")
-    
 
     return APIResponse(
         status_code="00000",
         message="get single product",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         product=products
     )
 
 
-@router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
-def get_my_products(db: Session = Depends(get_db)) -> dict:
-
-    return APIResponse(
-        status_code="00000",
-        message="get my products",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
-    )
+@router.get("", response_model=APIResponse, response_model_exclude_none=True)
+def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] == "buyer":
+        stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
+                  ).where(Product.is_delete == False).group_by(Product.pid)
+        products = db.execute(stmt).mappings().all()
+        if not products:
+            raise APIException(400, "20001", "product not found")
+        return APIResponse(
+            status_code="00000",
+            message="get all can buy products",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            product=products
+        )
+    elif payload["role"] == "seller":
+        stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
+                  ).where(Product.seller_id == payload["id"], Product.is_delete == False).group_by(Product.pid)
+        products = db.execute(stmt).mappings().all()
+        if not products:
+            raise APIException(400, "20001", "product not found")
+        return APIResponse(
+            status_code="00000",
+            message="get all seller products",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            product=products
+        )
+    else:
+        raise APIException(403, "00004", "forbidden")
