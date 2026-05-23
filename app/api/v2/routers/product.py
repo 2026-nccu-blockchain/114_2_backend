@@ -9,26 +9,28 @@ from datetime import datetime, timedelta
 from app.core.deps import verify_token, return_payload
 from app.schemas.product import ProductCreateRequest, ProductUpdateRequest
 from decimal import Decimal, ROUND_HALF_UP
-import time
+from snowflake import SnowflakeGenerator
+import pytz
 
 router = APIRouter()
+gen = SnowflakeGenerator(42)
 
 @router.post("/add", response_model=APIResponse, response_model_exclude_none=True)
 def add_product(request: Request, data: ProductCreateRequest, db: Session = Depends(get_db)) -> dict:
-    # verify_token(request)
-    # payload = return_payload(request)
-    # if payload["role"] != "seller":
-    #     raise APIException(403, "00004", "forbidden")
-    product = db.query(Product).filter(Product.name == data.name, Product.type == data.type, Product.is_delete == False).first()
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "seller":
+        raise APIException(403, "00004", "forbidden")
+    product = db.query(Product).filter(Product.name == data.name, Product.seller_id == payload["id"], Product.is_delete == False).first()
     if product is not None:
         raise APIException(400, "20007", "product existed")
     new_product = Product(
-        pid=f"P{int(time.time())}",
+        pid=f"P{next(gen)}",
         name=data.name,
         price=Decimal(data.price).quantize(Decimal("0.00")),
         stock=data.stock,
         status=data.status,
-        # seller_id=payload["id"],
+        seller_id=payload["id"],
         desc=data.desc,
         type=data.type,
     )
@@ -41,7 +43,16 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
     return APIResponse(
         status_code="00000",
         message="product created",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        pid=new_product.pid,
+        name=new_product.name,
+        price=new_product.price,
+        stock=new_product.stock,
+        status=new_product.status,
+        seller_id=new_product.seller_id,
+        desc=new_product.desc,
+        type=new_product.type,
+        product_url=new_product.product_url
     )
 
 
