@@ -132,7 +132,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
 
 
 @router.put("/type/{uuid}", response_model=APIResponse, response_model_exclude_none=True)
-def update_product(request: Request, uuid: str, data: ProductTypeUpdateRequest, db: Session = Depends(get_db)) -> dict:
+def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "seller":
@@ -188,6 +188,27 @@ def delete_product(request: Request, ProductId: str, db: Session = Depends(get_d
     return APIResponse(
         status_code="00000",
         message="product deleted",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+    )
+
+@router.delete("/type/{uuid}", response_model=APIResponse, response_model_exclude_none=True)
+def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "seller":
+        raise APIException(403, "00004", "forbidden")
+    product = db.query(Product).filter(Product.id == uuid, Product.is_delete == False).first()
+    if product is None:
+        raise APIException(400, "20001", "product not found")
+    if product.seller_id != payload["id"]:
+        raise APIException(403, "00004", "forbidden")
+    product.is_delete = True
+    db.commit()
+    db.refresh(product)
+
+    return APIResponse(
+        status_code="00000",
+        message="product type deleted",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
