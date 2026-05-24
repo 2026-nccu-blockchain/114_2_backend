@@ -56,7 +56,7 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         product_url=new_product.product_url
     )
 
-@router.post("/add/type/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
+@router.post("/add/{ProductId}/type", response_model=APIResponse, response_model_exclude_none=True)
 def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
@@ -103,7 +103,7 @@ def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRe
     )
 
 
-@router.put("/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
+@router.put("/{ProductId}/product", response_model=APIResponse, response_model_exclude_none=True)
 def update_product(request: Request, ProductId: str, data: ProductUpdateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
@@ -131,7 +131,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
     )
 
 
-@router.put("/type/{uuid}", response_model=APIResponse, response_model_exclude_none=True)
+@router.put("/{uuid}/type", response_model=APIResponse, response_model_exclude_none=True)
 def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
@@ -170,7 +170,7 @@ def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequ
         product_url=product.product_url
     )
 
-@router.delete("/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
+@router.delete("/{ProductId}/product", response_model=APIResponse, response_model_exclude_none=True)
 def delete_product(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
@@ -191,7 +191,7 @@ def delete_product(request: Request, ProductId: str, db: Session = Depends(get_d
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
-@router.delete("/type/{uuid}", response_model=APIResponse, response_model_exclude_none=True)
+@router.delete("/{uuid}/type", response_model=APIResponse, response_model_exclude_none=True)
 def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
