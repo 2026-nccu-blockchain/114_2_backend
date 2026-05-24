@@ -3,6 +3,7 @@ from fastapi import Request
 from datetime import datetime
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+import pytz
 
 from app.api.v2.router import api_router
 from app.db.session import init_db
@@ -23,8 +24,8 @@ async def api_exception_handler(request: Request, exc: APIException):
         status_code=exc.status_code,
           content=jsonable_encoder(ErrorResponse(
             status_code=exc.status_code_str,
-            desc=exc.desc,
-            response_datetime=datetime.utcnow()
+            message=exc.message,
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei'))
           ))
     )
 

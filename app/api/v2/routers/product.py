@@ -56,6 +56,7 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         product_url=new_product.product_url
     )
 
+
 @router.post("/add/{ProductId}/type", response_model=APIResponse, response_model_exclude_none=True)
 def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
@@ -170,6 +171,7 @@ def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequ
         product_url=product.product_url
     )
 
+
 @router.delete("/{ProductId}/product", response_model=APIResponse, response_model_exclude_none=True)
 def delete_product(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
@@ -190,6 +192,7 @@ def delete_product(request: Request, ProductId: str, db: Session = Depends(get_d
         message="product deleted",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
+
 
 @router.delete("/{uuid}/type", response_model=APIResponse, response_model_exclude_none=True)
 def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_db)) -> dict:

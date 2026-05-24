@@ -10,6 +10,7 @@ class APIResponse(BaseModel):
     message: str
     response_datetime: datetime
     # 不加 data 欄位，或直接把要回傳的欄位寫在這層
+    # 其他欄位依需求加
     token: Optional[str] = None
     uuid: Optional[str] = None
     pid: Optional[str] = None
@@ -43,12 +44,11 @@ class APIResponse(BaseModel):
     total_price: Optional[float] = None
     order: Optional[list] = None
     is_first_login: Optional[bool] = None
-    # 其他欄位依需求加
     product_id: Optional[str] = None
     product_name: Optional[str] = None
     
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):
     status_code: str
-    desc: str
+    message: str
     response_datetime: datetime
