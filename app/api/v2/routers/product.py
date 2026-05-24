@@ -9,6 +9,8 @@ from app.core.exceptions import APIException
 from app.core.deps import verify_token
 import uuid
 
+router = APIRouter()
+
 @router.post("/add")
 def add_product(
     data: ProductCreateRequest,
