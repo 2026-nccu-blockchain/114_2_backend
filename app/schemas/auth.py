@@ -40,3 +40,12 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     username: str
     password: str
+
+class PasswordResetRequest(BaseModel):
+    password: str
+
+
+class PasswordForgetRequest(BaseModel):
+    email: EmailStr
+    phone: str
+    password: str

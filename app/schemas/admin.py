@@ -4,3 +4,4 @@ class AdminUpdateRequest(BaseModel):
     email: EmailStr
     name: str
     avatar_url: str
+    email: EmailStr
