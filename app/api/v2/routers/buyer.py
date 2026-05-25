@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi import Depends
+from typing import Optional
 from sqlalchemy.orm import Session
 from app.schemas.buyer import BuyerUpdateRequest
 from app.db.session import get_db
@@ -7,12 +8,21 @@ from app.models.model import Buyer
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
-from app.core.deps import verify_token
+from app.core.deps import return_payload
 
 router = APIRouter()
 @router.get("/me")
-def get_buyer_me(buyer_id: str, db: Session = Depends(get_db)):
-    buyer = db.query(Buyer).filter(Buyer.id == buyer_id, Buyer.is_delete == False).first()
+def get_buyer_me(
+    buyer_id: Optional[str] = None,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(return_payload)
+):
+    token_id = payload.get("id")
+    if payload.get("role") != "buyer" or not token_id:
+        raise APIException(403, "10008", "permission denied")
+    if buyer_id is not None and buyer_id != token_id:
+        raise APIException(403, "10008", "permission denied")
+    buyer = db.query(Buyer).filter(Buyer.id == token_id, Buyer.is_delete == False).first()
     if not buyer:
         raise APIException(404, "10001", "buyer not found")
 
@@ -29,8 +39,18 @@ def get_buyer_me(buyer_id: str, db: Session = Depends(get_db)):
 
 
 @router.put("/me")
-def update_buyer_me(buyer_id: str, data: BuyerUpdateRequest, db: Session = Depends(get_db)):
-    buyer = db.query(Buyer).filter(Buyer.id == buyer_id, Buyer.is_delete == False).first()
+def update_buyer_me(
+    data: BuyerUpdateRequest,
+    buyer_id: Optional[str] = None,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(return_payload)
+):
+    token_id = payload.get("id")
+    if payload.get("role") != "buyer" or not token_id:
+        raise APIException(403, "10008", "permission denied")
+    if buyer_id is not None and buyer_id != token_id:
+        raise APIException(403, "10008", "permission denied")
+    buyer = db.query(Buyer).filter(Buyer.id == token_id, Buyer.is_delete == False).first()
     if not buyer:
         raise APIException(404, "10001", "buyer not found")
 
@@ -54,8 +74,17 @@ def update_buyer_me(buyer_id: str, data: BuyerUpdateRequest, db: Session = Depen
 
 
 @router.delete("/{BuyerId}")
-def delete_buyer(BuyerId: str, db: Session = Depends(get_db)):
-    buyer = db.query(Buyer).filter(Buyer.id == BuyerId, Buyer.is_delete == False).first()
+def delete_buyer(
+    BuyerId: str,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(return_payload)
+):
+    token_id = payload.get("id")
+    if payload.get("role") != "buyer" or not token_id:
+        raise APIException(403, "10008", "permission denied")
+    if BuyerId != token_id:
+        raise APIException(403, "10008", "permission denied")
+    buyer = db.query(Buyer).filter(Buyer.id == token_id, Buyer.is_delete == False).first()
     if not buyer:
         raise APIException(404, "10001", "not found")
 

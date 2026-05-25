@@ -18,7 +18,7 @@ def add_product(
 ):
 
     new_product = Product(
-        p_id=str(uuid.uuid4()),
+        pid=str(uuid.uuid4()),
         name=data.name,
         price=data.price,
         stock=data.stock,

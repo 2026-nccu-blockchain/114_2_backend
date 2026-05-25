@@ -45,7 +45,7 @@ def driver_look_orders(
 
 @router.post("/driver/look/take/{OrderId}")
 def driver_take_order(
-    OrderId: int,
+    OrderId: str,
     data: DriverTakeOrderRequest,
     db: Session = Depends(get_db)
 ) -> dict:
@@ -59,7 +59,7 @@ def driver_take_order(
 
 @router.get("/{OrderId}")
 def get_order(
-    OrderId: int,
+    OrderId: str,
     db: Session = Depends(get_db)
 ) -> dict:
 
@@ -84,7 +84,7 @@ def get_my_orders(
 
 @router.put("/{OrderId}")
 def update_order_status(
-    OrderId: int,
+    OrderId: str,
     data: OrderUpdateStatusRequest,
     db: Session = Depends(get_db)
 ) -> dict:

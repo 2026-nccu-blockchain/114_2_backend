@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from typing import Optional
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.schemas.seller import SellerUpdateRequest
@@ -6,13 +7,22 @@ from app.db.session import get_db
 from app.models.model import Seller
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
-from app.core.deps import verify_token
+from app.core.deps import return_payload
 
 router = APIRouter()
 
 @router.get("/me")
-def get_seller_me(seller_id: str, db: Session = Depends(get_db)):
-    seller = db.query(Seller).filter(Seller.id == seller_id, Seller.is_delete == False).first()
+def get_seller_me(
+    seller_id: Optional[str] = None,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(return_payload)
+):
+    token_id = payload.get("id")
+    if payload.get("role") != "seller" or not token_id:
+        raise APIException(403, "10008", "permission denied")
+    if seller_id is not None and seller_id != token_id:
+        raise APIException(403, "10008", "permission denied")
+    seller = db.query(Seller).filter(Seller.id == token_id, Seller.is_delete == False).first()
     if not seller:
         raise APIException(404, "10001", "seller not found")
 
@@ -31,8 +41,18 @@ def get_seller_me(seller_id: str, db: Session = Depends(get_db)):
 
 
 @router.put("/me")
-def update_seller_me(seller_id: str, data: SellerUpdateRequest, db: Session = Depends(get_db)):
-    seller = db.query(Seller).filter(Seller.id == seller_id, Seller.is_delete == False).first()
+def update_seller_me(
+    data: SellerUpdateRequest,
+    seller_id: Optional[str] = None,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(return_payload)
+):
+    token_id = payload.get("id")
+    if payload.get("role") != "seller" or not token_id:
+        raise APIException(403, "10008", "permission denied")
+    if seller_id is not None and seller_id != token_id:
+        raise APIException(403, "10008", "permission denied")
+    seller = db.query(Seller).filter(Seller.id == token_id, Seller.is_delete == False).first()
     if not seller:
         raise APIException(404, "10001", "seller not found")
 
@@ -60,8 +80,17 @@ def update_seller_me(seller_id: str, data: SellerUpdateRequest, db: Session = De
 
 
 @router.delete("/{SellerId}")
-def delete_seller(SellerId: str, db: Session = Depends(get_db)):
-    seller = db.query(Seller).filter(Seller.id == SellerId, Seller.is_delete == False).first()
+def delete_seller(
+    SellerId: str,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(return_payload)
+):
+    token_id = payload.get("id")
+    if payload.get("role") != "seller" or not token_id:
+        raise APIException(403, "10008", "permission denied")
+    if SellerId != token_id:
+        raise APIException(403, "10008", "permission denied")
+    seller = db.query(Seller).filter(Seller.id == token_id, Seller.is_delete == False).first()
     if not seller:
         raise APIException(404, "10001", "not found")
 

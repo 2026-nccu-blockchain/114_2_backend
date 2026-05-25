@@ -2,14 +2,15 @@
 
 ## API Version
 
-* version: v2.0.0
+* version: v2.0.1
 * base URL: `/api/v2`
 
 ### 說明
-本系統 API 採用版本控制方式管理，目前版本為 `v2.0.0`。  
+本系統 API 採用版本控制方式管理，目前版本為 `v2.0.1`。  
 所有 API 路由皆需加上版本前綴 `/api/v2`，以利未來功能擴充與版本維護。
 
 ## auth
+
 ### 管理員登入
 * http methods: POST
 * router: /api/v2/auth`/admin/login`
@@ -54,6 +55,7 @@
 ### 管理員註冊
 * http methods: POST
 * router: /api/v2/auth`/admin/register`
+* note: 密碼強度需至少 8 碼、包含大寫、小寫、數字。
 * request:
 
 |   Name   | Essential |  Type  |                    Description                     |
@@ -560,6 +562,7 @@
 * http methods: GET
 * router: /api/v2/buyer`/me`
 * header: `Authorization: Bearer <token>`
+* note: 僅可查詢自己的資料，token id 不一致會回傳 403 / 10008
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -599,6 +602,7 @@
 * http methods: PUT
 * router: /api/v2/buyer`/me`
 * header: `Authorization: Bearer <token>`
+* note: 僅可更新自己的資料，token id 不一致會回傳 403 / 10008
 * request
 
 |    Name    | Essential |  Type  | Description |
@@ -655,6 +659,7 @@
 * http methods: DELETE
 * router: /api/v2/buyer`/{BuyerId}`
 * header: `Authorization: Bearer <token>`
+* note: 僅可刪除自己，token id 與 BuyerId 不一致會回傳 403 / 10008
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -684,6 +689,7 @@
 * http methods: GET
 * router: /api/v2/seller`/me`
 * header: `Authorization: Bearer <token>`
+* note: 僅可查詢自己的資料，token id 不一致會回傳 403 / 10008
 * response:
 
 |      Name       | Essential |  Type  |   Description   |
@@ -727,6 +733,7 @@
 * http methods: PUT
 * router: /api/v2/seller`/me`
 * header: `Authorization: Bearer <token>`
+* note: 僅可更新自己的資料，token id 不一致會回傳 403 / 10008
 * request
 
 |      Name       | Essential |  Type  |  Description   |
@@ -794,6 +801,7 @@
 * http methods: DELETE
 * router: /api/v2/seller`/{SellerId}`
 * header: `Authorization: Bearer <token>`
+* note: 僅可刪除自己，token id 與 SellerId 不一致會回傳 403 / 10008
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -823,6 +831,7 @@
 * http methods: GET
 * router: /api/v2/driver`/me`
 * header: `Authorization: Bearer <token>`
+* note: 僅可查詢自己的資料，token id 不一致會回傳 403 / 10008
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -860,6 +869,7 @@
 * http methods: PUT
 * router: /api/v2/driver`/me`
 * header: `Authorization: Bearer <token>`
+* note: 僅可更新自己的資料，token id 不一致會回傳 403 / 10008
 * request
 
 |    Name    | Essential |  Type  |  Description   |
@@ -913,6 +923,7 @@
 * http methods: DELETE
 * router: /api/v2/driver`/{DriverId}`
 * header: `Authorization: Bearer <token>`
+* note: 僅可刪除自己，token id 與 DriverId 不一致會回傳 403 / 10008
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -971,7 +982,7 @@
 
 // 失敗
 {
-    "status_code": "10008",
+    "status_code": "10010",
     "message": "password is not strong",
     "datetime": "2026-03-30 21:35:30"
 }
@@ -1692,8 +1703,9 @@
 | 10005       | token_expired          | token 過期    |
 | 10006       | register_duplicate     | 帳號已存在    |
 | 10007       | incorrect_email_format | email格式錯誤 |
-| 10008       | password_is_not_strong | 密碼強度不夠  |
+| 10008       | permission_denied      | 權限不足      |
 | 10009       | logout_failed          | 登出失敗      |
+| 10010       | password_is_not_strong | 密碼強度不夠  |
 
 ---
 
