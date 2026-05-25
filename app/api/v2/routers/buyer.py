@@ -8,6 +8,7 @@ from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
 from app.core.deps import verify_token
+import pytz
 
 router = APIRouter()
 @router.get("/me")
@@ -18,8 +19,8 @@ def get_buyer_me(buyer_id: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         user_id=buyer.id,
         email=buyer.email,
         phone=buyer.phone,
@@ -44,8 +45,8 @@ def update_buyer_me(buyer_id: str, data: BuyerUpdateRequest, db: Session = Depen
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         email=buyer.email,
         phone=buyer.phone,
         name=buyer.name,
@@ -64,6 +65,6 @@ def delete_buyer(BuyerId: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )

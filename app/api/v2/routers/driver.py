@@ -9,6 +9,7 @@ from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
 from app.core.deps import verify_token
+import pytz
 
 router = APIRouter()
 
@@ -20,8 +21,8 @@ def get_driver_me(driver_id: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         user_id=driver.id,
         email=driver.email,
         phone=driver.phone,
@@ -44,8 +45,8 @@ def update_driver_me(driver_id: str, data: DriverUpdateRequest, db: Session = De
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         email=driver.email,
         phone=driver.phone,
         name=driver.name,
@@ -63,6 +64,6 @@ def delete_driver(DriverId: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )

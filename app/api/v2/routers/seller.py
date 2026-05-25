@@ -7,6 +7,7 @@ from app.models.model import Seller
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from app.core.deps import verify_token
+import pytz
 
 router = APIRouter()
 
@@ -18,8 +19,8 @@ def get_seller_me(seller_id: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         user_id=seller.id,
         email=seller.email,
         phone=seller.phone,
@@ -48,8 +49,8 @@ def update_seller_me(seller_id: str, data: SellerUpdateRequest, db: Session = De
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         email=seller.email,
         phone=seller.phone,
         name=seller.name,
@@ -70,6 +71,6 @@ def delete_seller(SellerId: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )

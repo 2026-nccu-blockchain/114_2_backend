@@ -43,7 +43,7 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
 
     return APIResponse(
         status_code="00000",
-        message="product created",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         uuid=new_product.id,
         pid=new_product.pid,
@@ -66,7 +66,7 @@ def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRe
         raise APIException(403, "00004", "forbidden")
     product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
     if product is None:
-        raise APIException(400, "20001", "product not found")
+        raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     same_product = db.query(Product).filter(Product.pid == ProductId, Product.type == data.type, Product.seller_id == payload["id"], Product.is_delete == False).first()
@@ -90,7 +90,7 @@ def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRe
 
     return APIResponse(
         status_code="00000",
-        message="product type created",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         uuid=new_product_type.id,
         pid=new_product_type.pid,
@@ -113,7 +113,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
         raise APIException(403, "00004", "forbidden")
     product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
     if product is None:
-        raise APIException(400, "20001", "product not found")
+        raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     same_product = db.query(Product).filter(Product.name == data.name, Product.seller_id == payload["id"], Product.is_delete == False).first()
@@ -126,7 +126,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
 
     return APIResponse(
         status_code="00000",
-        message="product updated",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         pid=product.pid,
         name=data.name
@@ -141,7 +141,7 @@ def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequ
         raise APIException(403, "00004", "forbidden")
     product = db.query(Product).filter(Product.id == uuid, Product.is_delete == False).first()
     if product is None:
-        raise APIException(400, "20001", "product not found")
+        raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     same_product = db.query(Product).filter(Product.pid == product.pid, Product.type == data.type, Product.seller_id == payload["id"], Product.is_delete == False).first()
@@ -158,7 +158,7 @@ def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequ
 
     return APIResponse(
         status_code="00000",
-        message="product type updated",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         uuid=product.id,
         pid=product.pid,
@@ -181,7 +181,7 @@ def delete_product(request: Request, ProductId: str, db: Session = Depends(get_d
         raise APIException(403, "00004", "forbidden")
     products = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).all()
     if not products:
-        raise APIException(400, "20001", "product not found")
+        raise APIException(404, "20001", "product not found")
     if products[0].seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     for p in products:
@@ -190,7 +190,7 @@ def delete_product(request: Request, ProductId: str, db: Session = Depends(get_d
 
     return APIResponse(
         status_code="00000",
-        message="product deleted",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
@@ -203,7 +203,7 @@ def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_d
         raise APIException(403, "00004", "forbidden")
     product = db.query(Product).filter(Product.id == uuid, Product.is_delete == False).first()
     if product is None:
-        raise APIException(400, "20001", "product not found")
+        raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     product.is_delete = True
@@ -212,7 +212,7 @@ def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_d
 
     return APIResponse(
         status_code="00000",
-        message="product type deleted",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
@@ -224,11 +224,11 @@ def get_product(request: Request, ProductId: str, db: Session = Depends(get_db))
                   ).where(Product.pid == ProductId, Product.is_delete == False)
     products = db.execute(stmt).mappings().all()
     if not products:
-        raise APIException(400, "20001", "product not found")
+        raise APIException(404, "20001", "product not found")
 
     return APIResponse(
         status_code="00000",
-        message="get single product",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         product=products
     )
@@ -243,10 +243,10 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
                   ).where(Product.is_delete == False).group_by(Product.pid)
         products = db.execute(stmt).mappings().all()
         if not products:
-            raise APIException(400, "20001", "product not found")
+            raise APIException(404, "20001", "product not found")
         return APIResponse(
             status_code="00000",
-            message="get all can buy products",
+            message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             product=products
         )
@@ -255,10 +255,10 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
                   ).where(Product.seller_id == payload["id"], Product.is_delete == False).group_by(Product.pid)
         products = db.execute(stmt).mappings().all()
         if not products:
-            raise APIException(400, "20001", "product not found")
+            raise APIException(404, "20001", "product not found")
         return APIResponse(
             status_code="00000",
-            message="get all seller products",
+            message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             product=products
         )

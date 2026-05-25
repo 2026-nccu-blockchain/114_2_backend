@@ -25,7 +25,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Admin).filter(Admin.email == data.email).first()
     if user is None:
-        raise APIException(400, "10001", "user not found")
+        raise APIException(404, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"id": f"{user.id}", "role": "admin"}
@@ -75,7 +75,7 @@ def buyer_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Buyer).filter(Buyer.email == data.email, Buyer.is_delete == False).first()
     if user is None:
-        raise APIException(400, "10001", "user not found")
+        raise APIException(404, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"user": f"{user.id}", "role": "buyer"}
@@ -124,7 +124,7 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Seller).filter(Seller.email == data.email, Seller.is_delete == False).first()
     if user is None:
-        raise APIException(400, "10001", "user not found")
+        raise APIException(404, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"id": f"{user.id}", "role": "seller"}
@@ -182,7 +182,7 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Driver).filter(Driver.email == data.email, Driver.is_delete == False).first()
     if user is None:
-        raise APIException(400, "10001", "user not found")
+        raise APIException(404, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"id": f"{user.id}", "role": "driver"}
