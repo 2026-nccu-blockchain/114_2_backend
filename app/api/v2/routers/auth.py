@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
+from fastapi import Depends
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.model import Admin, Buyer, Seller, Driver
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime, timedelta
+import re
 from app.core.jwt import create_access_token
 from app.schemas.auth import (
     LoginRequest,
@@ -15,9 +17,19 @@ from app.schemas.auth import (
     PasswordResetRequest,
     PasswordForgetRequest
 )
-import pytz
 
 router = APIRouter()
+
+def is_strong_password(password: str) -> bool:
+    if len(password) < 8:
+        return False
+    if not re.search(r"[A-Z]", password):
+        return False
+    if not re.search(r"[a-z]", password):
+        return False
+    if not re.search(r"\d", password):
+        return False
+    return True
 
 @router.post("/admin/login", response_model=APIResponse, response_model_exclude_none=True)
 def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
@@ -25,7 +37,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Admin).filter(Admin.email == data.email).first()
     if user is None:
-        raise APIException(404, "10001", "user not found")
+        raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"id": f"{user.id}", "role": "admin"}
@@ -40,7 +52,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
         is_first_login=is_first_login
     )
@@ -50,6 +62,8 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
 def admin_register(data: AdminRegisterRequest, db: Session = Depends(get_db)) -> dict:
     if not Admin.verify_email(data.email):
         raise APIException(400, "10007", "incorrect email format")
+    if not is_strong_password(data.password):
+        raise APIException(400, "10010", "password is not strong")
     if db.query(Admin).filter(Admin.email == data.email).first() is not None:
         raise APIException(400, "10006", "register duplicate")
     new_admin = Admin(
@@ -65,7 +79,7 @@ def admin_register(data: AdminRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
 
 
@@ -75,16 +89,16 @@ def buyer_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Buyer).filter(Buyer.email == data.email, Buyer.is_delete == False).first()
     if user is None:
-        raise APIException(404, "10001", "user not found")
+        raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
-    payload = {"user": f"{user.id}", "role": "buyer"}
+    payload = {"id": f"{user.id}", "role": "buyer"}
     token = create_access_token(payload)
 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
     )
 
@@ -95,6 +109,8 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
         raise APIException(400, "10007", "incorrect email format")
     if not Buyer.verify_phone(data.phone):
         raise APIException(400, "10009", "incorrect phone format")
+    if not is_strong_password(data.password):
+        raise APIException(400, "10010", "password is not strong")
     if db.query(Buyer).filter(Buyer.email == data.email, Buyer.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, email has been uesd")
     if db.query(Buyer).filter(Buyer.phone == data.phone, Buyer.is_delete == False).first() is not None:
@@ -114,7 +130,7 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
 
 
@@ -124,7 +140,7 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Seller).filter(Seller.email == data.email, Seller.is_delete == False).first()
     if user is None:
-        raise APIException(404, "10001", "user not found")
+        raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"id": f"{user.id}", "role": "seller"}
@@ -139,7 +155,7 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
         is_first_login=is_first_login
     )
@@ -151,6 +167,8 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
         raise APIException(400, "10007", "incorrect email format")
     if not Seller.verify_phone(data.phone):
         raise APIException(400, "10009", "incorrect phone format")
+    if not is_strong_password(data.password):
+        raise APIException(400, "10010", "password is not strong")
     if db.query(Seller).filter(Seller.email == data.email, Seller.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, email has been uesd")
     if db.query(Seller).filter(Seller.phone == data.phone, Seller.is_delete == False).first() is not None:
@@ -172,7 +190,7 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
     )
 
 
@@ -182,7 +200,7 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
         raise APIException(400, "10007", "incorrect email format")
     user = db.query(Driver).filter(Driver.email == data.email, Driver.is_delete == False).first()
     if user is None:
-        raise APIException(404, "10001", "user not found")
+        raise APIException(400, "10001", "user not found")
     if not user.verify_password(data.password):
         raise APIException(400, "10002", "invalid password")
     payload = {"id": f"{user.id}", "role": "driver"}
@@ -197,7 +215,7 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.utcnow() +  timedelta(hours=8),
         token=token,
         is_first_login=is_first_login
     )
@@ -209,6 +227,8 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
         raise APIException(400, "10007", "incorrect email format")
     if not Driver.verify_phone(data.phone):
         raise APIException(400, "10009", "incorrect phone format")
+    if not is_strong_password(data.password):
+        raise APIException(400, "10010", "password is not strong")
     if db.query(Driver).filter(Driver.email == data.email, Driver.is_delete == False).first() is not None:
         raise APIException(400, "10006", "register duplicate, email has been uesd")
     if db.query(Driver).filter(Driver.phone == data.phone, Driver.is_delete == False).first() is not None:
@@ -251,7 +271,7 @@ def forget_password(data: PasswordForgetRequest, db: Session = Depends(get_db)):
     if not user:
         raise APIException(404, "10001", "not found")
 
-    user.hash_password = hash_password(data.password)
+    user.set_password(data.password)
     db.commit()
 
     return APIResponse(

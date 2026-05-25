@@ -14,5 +14,10 @@ def verify_token(request: Request):
     
 def return_payload(request: Request):
     auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise APIException(401, "10004", "Authorization header missing or invalid")
     token = auth_header.split(" ")[1]
-    return decode_access_token(token)
+    try:
+        return decode_access_token(token)
+    except Exception:
+        raise APIException(401, "10005", "Invalid or expired token")
