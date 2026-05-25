@@ -44,7 +44,7 @@ def update_buyer_me(buyer_id: str, data: BuyerUpdateRequest, db: Session = Depen
 
     return APIResponse(
         status_code="00000",
-        desc="buyer profile updated successfully",
+        desc="success",
         response_datetime=datetime.utcnow(),
         email=buyer.email,
         phone=buyer.phone,
