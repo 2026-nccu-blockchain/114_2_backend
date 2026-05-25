@@ -234,7 +234,7 @@ def get_product(request: Request, ProductId: str, db: Session = Depends(get_db))
     )
 
 
-@router.get("", response_model=APIResponse, response_model_exclude_none=True)
+@router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
 def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)

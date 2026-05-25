@@ -26,7 +26,6 @@ class APIResponse(BaseModel):
     buyer: Optional[list] = None
     seller: Optional[list] = None
     driver: Optional[list] = None
-    url: Optional[str] = None
     price: Optional[float] = None
     stock: Optional[int] = None
     status: Optional[bool] = None
