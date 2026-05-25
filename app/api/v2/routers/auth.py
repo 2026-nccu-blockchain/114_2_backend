@@ -12,6 +12,8 @@ from app.schemas.auth import (
     BuyerRegisterRequest,
     SellerRegisterRequest,
     DriverRegisterRequest,
+    PasswordResetRequest,
+    PasswordForgetRequest
 )
 import pytz
 
@@ -226,4 +228,34 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
         status_code="00000",
         message="success",
         response_datetime=datetime.utcnow() +  timedelta(hours=8),
+    )
+
+@router.post("/password/reset/me")
+def reset_password(data: PasswordResetRequest, db: Session = Depends(get_db)):
+    # TODO: auth 完成後，用 token 找目前登入使用者
+    return APIResponse(
+        status_code="00000",
+        desc="success",
+        response_datetime=datetime.utcnow()
+    )
+
+
+@router.post("/password/forget")
+def forget_password(data: PasswordForgetRequest, db: Session = Depends(get_db)):
+    user = (
+        db.query(Buyer).filter(Buyer.email == data.email, Buyer.phone == data.phone).first()
+        or db.query(Seller).filter(Seller.email == data.email, Seller.phone == data.phone).first()
+        or db.query(Driver).filter(Driver.email == data.email, Driver.phone == data.phone).first()
+    )
+
+    if not user:
+        raise APIException(404, "10001", "not found")
+
+    user.hash_password = hash_password(data.password)
+    db.commit()
+
+    return APIResponse(
+        status_code="00000",
+        desc="success",
+        response_datetime=datetime.utcnow()
     )

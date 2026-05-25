@@ -12,6 +12,7 @@ from decimal import Decimal
 from snowflake import SnowflakeGenerator
 import pytz
 
+
 router = APIRouter()
 gen = SnowflakeGenerator(42)
 
