@@ -44,7 +44,7 @@ def update_driver_me(driver_id: str, data: DriverUpdateRequest, db: Session = De
 
     return APIResponse(
         status_code="00000",
-        desc="driver profile updated successfully",
+        desc="success",
         response_datetime=datetime.utcnow(),
         email=driver.email,
         phone=driver.phone,
