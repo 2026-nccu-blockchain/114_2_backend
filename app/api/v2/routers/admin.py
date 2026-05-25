@@ -42,7 +42,7 @@ def update_admin_me(admin_id: str, data: AdminUpdateRequest, db: Session = Depen
 
     return APIResponse(
         status_code="00000",
-        desc="admin profile updated successfully",
+        desc="success",
         response_datetime=datetime.utcnow(),
         email=admin.email,
         name=admin.name,
