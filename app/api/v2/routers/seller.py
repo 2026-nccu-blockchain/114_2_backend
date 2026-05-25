@@ -48,7 +48,7 @@ def update_seller_me(seller_id: str, data: SellerUpdateRequest, db: Session = De
 
     return APIResponse(
         status_code="00000",
-        desc="seller profile updated successfully",
+        desc="success",
         response_datetime=datetime.utcnow(),
         email=seller.email,
         phone=seller.phone,
