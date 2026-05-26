@@ -9,6 +9,7 @@ from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
 from app.core.deps import verify_token
+import pytz
 
 router = APIRouter()
 
@@ -20,8 +21,8 @@ def get_admin_me(admin_id: str, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         user_id=admin.id,
         email=admin.email,
         name=admin.name,
@@ -42,8 +43,8 @@ def update_admin_me(admin_id: str, data: AdminUpdateRequest, db: Session = Depen
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         email=admin.email,
         name=admin.name,
     )
@@ -54,8 +55,8 @@ def get_all_buyers(db: Session = Depends(get_db)):
     buyers = db.query(Buyer).filter(Buyer.is_delete == False).all()
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        mseeage="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         buyer=[
             {
                 "uuid": buyer.id,
@@ -74,8 +75,8 @@ def get_all_sellers(db: Session = Depends(get_db)):
     sellers = db.query(Seller).filter(Seller.is_delete == False).all()
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         seller=[
             {
                 "uuid": seller.id,
@@ -96,8 +97,8 @@ def get_all_drivers(db: Session = Depends(get_db)):
     drivers = db.query(Driver).filter(Driver.is_delete == False).all()
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow(),
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         driver=[
             {
                 "uuid": driver.id,
