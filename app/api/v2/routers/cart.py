@@ -16,7 +16,7 @@ router = APIRouter()
 gen = SnowflakeGenerator(42)
 
 @router.post("/cart", response_model=APIResponse, response_model_exclude_none=True)
-def add_product(request: Request, data: CartCreateRequest, db: Session = Depends(get_db)) -> dict:
+def add_cart(request: Request, data: CartCreateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "buyer":
@@ -26,7 +26,7 @@ def add_product(request: Request, data: CartCreateRequest, db: Session = Depends
     product = db.query(Product).filter(Product.id == data.product_id, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
-    same_product = db.query(Cart).filter(Cart.product_id == data.product_id, Product.is_delete == False).first()
+    same_product = db.query(Cart).filter(Cart.product_id == data.product_id, Cart.is_delete == False).first()
     if same_product is not None:
         raise APIException(400, "20007", "product existed")
     if product.status == False:
@@ -55,5 +55,40 @@ def add_product(request: Request, data: CartCreateRequest, db: Session = Depends
         type=product.type,
         total_price=new_cart.total_price,
         count=new_cart.count,
+        seller_id=product.seller_id
+    )
+
+
+@router.put("/cart/{CartId}", response_model=APIResponse, response_model_exclude_none=True)
+def update_cart(request: Request, CartId: str, data: CartUpdateRequest, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "buyer":
+        raise APIException(403, "00004", "forbidden")
+    if data.count <= 0:
+        raise APIException(400, "20009", "number invalid")
+    cart_product = db.query(Cart).filter(Cart.id == CartId, Cart.buyer_id == payload["id"], Cart.is_delete == False).first()
+    if cart_product is None:
+        raise APIException(404, "20001", "product not found")
+    product = cart_product.products
+    if product.stock + cart_product.count - data.count < 0:
+        raise APIException(400, "20002", "product out of stock")
+    product.stock = product.stock + cart_product.count - data.count
+    cart_product.count = data.count
+    cart_product.total_price = Decimal(product.price * data.count).quantize(Decimal("0.00"))
+    db.commit()
+    db.refresh(cart_product)
+    db.refresh(product)
+
+    return APIResponse(
+        status_code="00000",
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        cart_id=cart_product.id,
+        product_id=cart_product.product_id,
+        name=product.name,
+        type=product.type,
+        total_price=cart_product.total_price,
+        count=cart_product.count,
         seller_id=product.seller_id
     )
