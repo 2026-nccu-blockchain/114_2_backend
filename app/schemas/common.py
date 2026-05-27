@@ -13,6 +13,7 @@ class APIResponse(BaseModel):
     # 其他欄位依需求加
     token: Optional[str] = None
     uuid: Optional[str] = None
+    product_id: Optional[str] = None
     pid: Optional[str] = None
     oid: Optional[str] = None
     email: Optional[str] = None
@@ -34,6 +35,7 @@ class APIResponse(BaseModel):
     product_url: Optional[str] = None
     product: Optional[list[ProductResponse]] = None
     order_status: Optional[str] = None
+    cart_id: Optional[str] = None
     buyer_id: Optional[str] = None
     seller_id: Optional[str] = None
     driver_id: Optional[str] = None
@@ -41,6 +43,7 @@ class APIResponse(BaseModel):
     to_addr: Optional[str] = None
     from_addr: Optional[str] = None
     total_price: Optional[float] = None
+    count: Optional[int] = None
     order: Optional[list] = None
     is_first_login: Optional[bool] = None
     product_id: Optional[str] = None

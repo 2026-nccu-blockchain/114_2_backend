@@ -61,6 +61,7 @@ class Buyer(Base):
     update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     orders = relationship("Order", back_populates="buyer")
+    carts = relationship("Cart", back_populates="buyer")
 
     def set_password(self, password: str) -> None:
         salt = bcrypt.gensalt()
@@ -168,6 +169,7 @@ class Product(Base):
 
     seller = relationship("Seller", back_populates="products")
     selled_product = relationship("SelledProduct", back_populates="product")
+    carts = relationship("Cart", back_populates="products")
 
 class Order(Base):
     __tablename__ = "orders"
@@ -196,6 +198,25 @@ class SelledProduct(Base):
     price = Column(DECIMAL(10, 2), nullable=False)
     count = Column(Integer, nullable=False)
     order_id = Column(String(36), ForeignKey("orders.id"))
+    is_refund = Column(Boolean, nullable=False, default=False)
+    create_time = Column(DateTime(timezone=True), server_default=func.now())
+    update_time = Column(DateTime(timezone=True), onupdate=func.now())
 
     product = relationship("Product", back_populates="selled_product")
     order = relationship("Order", back_populates="selled_products")
+
+class Cart(Base):
+    __tablename__ = "carts"
+
+    id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
+    product_id = Column(String(36), ForeignKey("products.id"))
+    name = Column(String(255), nullable=False)
+    total_price = Column(DECIMAL(10, 2), nullable=False)
+    count = Column(Integer, nullable=False)
+    buyer_id = Column(String(36), ForeignKey("buyers.id"))
+    is_delete = Column(Boolean, nullable=False, default=False)
+    create_time = Column(DateTime(timezone=True), server_default=func.now())
+    update_time = Column(DateTime(timezone=True), onupdate=func.now())
+
+    buyer = relationship("Buyer", back_populates="carts")
+    products = relationship("Product", back_populates="carts")
