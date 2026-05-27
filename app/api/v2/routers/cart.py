@@ -92,3 +92,24 @@ def update_cart(request: Request, CartId: str, data: CartUpdateRequest, db: Sess
         count=cart_product.count,
         seller_id=product.seller_id
     )
+
+
+@router.delete("/cart/{CartId}", response_model=APIResponse, response_model_exclude_none=True)
+def update_cart(request: Request, CartId: str, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "buyer":
+        raise APIException(403, "00004", "forbidden")
+    cart_product = db.query(Cart).filter(Cart.id == CartId, Cart.buyer_id == payload["id"], Cart.is_delete == False).first()
+    if cart_product is None:
+        raise APIException(404, "20001", "product not found")
+    product = cart_product.products
+    product.stock += cart_product.count
+    cart_product.is_delete = True
+    db.commit()
+
+    return APIResponse(
+        status_code="00000",
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+    )
