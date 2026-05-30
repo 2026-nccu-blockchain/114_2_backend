@@ -12,6 +12,6 @@ class CartResponse(BaseModel):
     id: str
     product_id: str
     name: str
-    # type: str
-    total_price: float
+    type: str
+    price: float
     count: int

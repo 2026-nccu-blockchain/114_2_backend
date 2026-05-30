@@ -37,9 +37,11 @@ def add_cart(request: Request, data: CartCreateRequest, db: Session = Depends(ge
     new_cart = Cart(
         product_id=data.product_id,
         name=product.name,
-        total_price=Decimal(product.price * data.count).quantize(Decimal("0.00")),
+        type=product.type,
+        price=Decimal(product.price).quantize(Decimal("0.00")),
         count=data.count,
-        buyer_id=payload["id"]
+        buyer_id=payload["id"],
+        seller_id=product.seller_id
     )
     db.add(new_cart)
     db.commit()
@@ -53,7 +55,7 @@ def add_cart(request: Request, data: CartCreateRequest, db: Session = Depends(ge
         product_id=new_cart.product_id,
         name=product.name,
         type=product.type,
-        total_price=new_cart.total_price,
+        price=new_cart.price,
         count=new_cart.count,
         seller_id=product.seller_id
     )
@@ -75,7 +77,7 @@ def update_cart(request: Request, CartId: str, data: CartUpdateRequest, db: Sess
         raise APIException(400, "20002", "product out of stock")
     product.stock = product.stock + cart_product.count - data.count
     cart_product.count = data.count
-    cart_product.total_price = Decimal(product.price * data.count).quantize(Decimal("0.00"))
+    cart_product.price = Decimal(product.price).quantize(Decimal("0.00"))
     db.commit()
     db.refresh(cart_product)
     db.refresh(product)
@@ -88,7 +90,7 @@ def update_cart(request: Request, CartId: str, data: CartUpdateRequest, db: Sess
         product_id=cart_product.product_id,
         name=product.name,
         type=product.type,
-        total_price=cart_product.total_price,
+        price=cart_product.price,
         count=cart_product.count,
         seller_id=product.seller_id
     )
@@ -120,7 +122,7 @@ def update_cart(request: Request, db: Session = Depends(get_db)) -> dict:
     payload = return_payload(request)
     if payload["role"] != "buyer":
         raise APIException(403, "00004", "forbidden")
-    stmt = select(Cart.id, Cart.product_id, Cart.name, Cart.total_price, Cart.count
+    stmt = select(Cart.id, Cart.product_id, Cart.name, Cart.type, Cart.price, Cart.count
                   ).where(Cart.buyer_id == payload["id"], Cart.is_delete == False)
     cart_products = db.execute(stmt).mappings().all()
     if not cart_products:
