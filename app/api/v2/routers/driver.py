@@ -103,7 +103,7 @@ def driver_look_orders(request: Request, db: Session = Depends(get_db)) -> dict:
     payload = return_payload(request)
     if payload["role"] != "driver":
         raise APIException(403, "00004", "forbidden")
-    orders = db.query(Order).filter(Order.driver_id.is_(None), Order.order_status == OrderStatus.PACKED).all()
+    orders = db.query(Order).filter(Order.driver_id.is_(None), Order.order_status == OrderStatus.ORDERED).all()
     if not orders:
         raise APIException(404, "20004", "order not found")
 
@@ -113,12 +113,12 @@ def driver_look_orders(request: Request, db: Session = Depends(get_db)) -> dict:
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         order=[
             {
-                "order_id": str(order.id),
-                "buyer_id": str(order.buyer_id),
-                "seller_id": str(order.seller_id),
-                "from_addr": str(order.from_address),
-                "to_addr": str(order.to_address),
-                "order_status": str(order.order_status.value),
+                "order_id": order.id,
+                "buyer_id": order.buyer_id,
+                "seller_id": order.seller_id,
+                "from_addr": order.from_address,
+                "to_addr": order.to_address,
+                "order_status": order.order_status.value,
                 "total_price": float(order.total_price)
             }
             for order in orders
@@ -126,11 +126,29 @@ def driver_look_orders(request: Request, db: Session = Depends(get_db)) -> dict:
     )
 
 
-@router.post("/take/{OrderId}")
-def driver_take_order(OrderId: str, db: Session = Depends(get_db)) -> dict:
+@router.post("/take/{OrderId}", response_model=APIResponse, response_model_exclude_none=True)
+def driver_take_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "driver":
+        raise APIException(403, "00004", "forbidden")
+    order = db.query(Order).filter(Order.id == OrderId, Order.driver_id.is_(None), Order.order_status == OrderStatus.ORDERED).first()
+    if order is None:
+        raise APIException(404, "20004", "order not found")
+    order.driver_id = payload["id"]
+    db.commit()
+    db.refresh(order)
 
     return APIResponse(
         status_code="00000",
-        message="driver take order",
+        message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        order_id=order.id,
+        buyer_id=order.buyer_id,
+        seller_id=order.seller_id,
+        driver_id=order.driver_id,
+        from_addr=order.from_address,
+        to_addr=order.to_address,
+        order_status=order.order_status.value,
+        total_price=float(order.total_price)
     )
