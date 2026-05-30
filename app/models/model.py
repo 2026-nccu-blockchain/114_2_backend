@@ -197,6 +197,7 @@ class SelledProduct(Base):
     id = Column(String(36), primary_key=True, index=True, nullable=False, default=lambda: str(uuid.uuid4()))
     product_id = Column(String(36), ForeignKey("products.id"))
     name = Column(String(255), nullable=False)
+    # type = Column(String(255), nullable=False)
     price = Column(DECIMAL(10, 2), nullable=False)
     count = Column(Integer, nullable=False)
     order_id = Column(String(36), ForeignKey("orders.id"))

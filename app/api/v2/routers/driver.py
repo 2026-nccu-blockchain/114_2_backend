@@ -103,7 +103,7 @@ def driver_look_orders(request: Request, db: Session = Depends(get_db)) -> dict:
     payload = return_payload(request)
     if payload["role"] != "driver":
         raise APIException(403, "00004", "forbidden")
-    orders = db.query(Order).filter(Order.driver_id.is_(None), Order.order_status == OrderStatus.ORDERED).all()
+    orders = db.query(Order).filter(Order.driver_id.is_(None), Order.order_status == OrderStatus.PACKED).all()
     if not orders:
         raise APIException(404, "20004", "order not found")
 
@@ -132,7 +132,7 @@ def driver_take_order(request: Request, OrderId: str, db: Session = Depends(get_
     payload = return_payload(request)
     if payload["role"] != "driver":
         raise APIException(403, "00004", "forbidden")
-    order = db.query(Order).filter(Order.id == OrderId, Order.driver_id.is_(None), Order.order_status == OrderStatus.ORDERED).first()
+    order = db.query(Order).filter(Order.id == OrderId, Order.driver_id.is_(None), Order.order_status == OrderStatus.PACKED).first()
     if order is None:
         raise APIException(404, "20004", "order not found")
     order.driver_id = payload["id"]
