@@ -7,9 +7,5 @@ class OrderCreateRequest(BaseModel):
     order_status: str
 
 
-class DriverTakeOrderRequest(BaseModel):
-    driver_id: str
-
-
 class OrderUpdateStatusRequest(BaseModel):
     status: str

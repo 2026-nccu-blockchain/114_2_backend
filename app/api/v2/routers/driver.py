@@ -1,15 +1,14 @@
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Depends, Request
 from typing import Optional
 from sqlalchemy.orm import Session
-# from app.schemas.driver import
 from app.schemas.driver import DriverUpdateRequest
 from app.db.session import get_db
-from app.models.model import Driver
+from app.models.model import Driver, Order, OrderStatus
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
-from app.core.deps import return_payload
+from app.core.deps import verify_token, return_payload
+from decimal import Decimal
 import pytz
 
 router = APIRouter()
@@ -94,5 +93,44 @@ def delete_driver(
     return APIResponse(
         status_code="00000",
         message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+    )
+
+
+@router.get("/look", response_model=APIResponse, response_model_exclude_none=True)
+def driver_look_orders(request: Request, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] != "driver":
+        raise APIException(403, "00004", "forbidden")
+    orders = db.query(Order).filter(Order.driver_id.is_(None), Order.order_status == OrderStatus.PACKED).all()
+    if not orders:
+        raise APIException(404, "20004", "order not found")
+
+    return APIResponse(
+        status_code="00000",
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        order=[
+            {
+                "order_id": str(order.id),
+                "buyer_id": str(order.buyer_id),
+                "seller_id": str(order.seller_id),
+                "from_addr": str(order.from_address),
+                "to_addr": str(order.to_address),
+                "order_status": str(order.order_status.value),
+                "total_price": float(order.total_price)
+            }
+            for order in orders
+        ]
+    )
+
+
+@router.post("/take/{OrderId}")
+def driver_take_order(OrderId: str, db: Session = Depends(get_db)) -> dict:
+
+    return APIResponse(
+        status_code="00000",
+        message="driver take order",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )

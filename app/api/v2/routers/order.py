@@ -8,7 +8,6 @@ from app.core.exceptions import APIException
 from app.core.deps import verify_token, return_payload
 from app.schemas.order import (
     OrderCreateRequest,
-    DriverTakeOrderRequest,
     OrderUpdateStatusRequest,
 )
 from decimal import Decimal
@@ -71,32 +70,6 @@ def add_order(request: Request, data: OrderCreateRequest, db: Session = Depends(
         message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         
-    )
-
-
-@router.get("/driver/look")
-def driver_look_orders(
-    db: Session = Depends(get_db)
-) -> dict:
-
-    return APIResponse(
-        status_code="00000",
-        desc="get waiting orders",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-    )
-
-
-@router.post("/driver/look/take/{OrderId}")
-def driver_take_order(
-    OrderId: str,
-    data: DriverTakeOrderRequest,
-    db: Session = Depends(get_db)
-) -> dict:
-
-    return APIResponse(
-        status_code="00000",
-        desc="driver take order",
-        response_datetime=datetime.utcnow(),
     )
 
 
