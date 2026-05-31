@@ -1,8 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-from app.schemas.product import ProductResponse
-from app.schemas.cart import CartResponse
 
 
 # 合法請求的回應格式
@@ -49,7 +47,7 @@ class APIResponse(BaseModel):
     is_first_login: Optional[bool] = None
     product_name: Optional[str] = None
     url: Optional[str] = None
-    cart: Optional[list[CartResponse]] = None
+    cart: Optional[list] = None
 
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):

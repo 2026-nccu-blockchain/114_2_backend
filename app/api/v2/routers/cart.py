@@ -23,7 +23,7 @@ def add_cart(request: Request, data: CartCreateRequest, db: Session = Depends(ge
         raise APIException(403, "00004", "forbidden")
     if data.count <= 0:
         raise APIException(400, "20009", "number invalid")
-    product = db.query(Product).filter(Product.id == data.product_id, Product.is_delete == False).first()
+    product = db.query(Product).filter(Product.id == data.product_id, Product.status == True, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
     same_product = db.query(Cart).filter(Cart.product_id == data.product_id, Cart.is_delete == False).first()
@@ -116,15 +116,14 @@ def update_cart(request: Request, CartId: str, db: Session = Depends(get_db)) ->
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
+
 @router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
 def update_cart(request: Request, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "buyer":
         raise APIException(403, "00004", "forbidden")
-    stmt = select(Cart.id, Cart.product_id, Cart.name, Cart.type, Cart.price, Cart.count
-                  ).where(Cart.buyer_id == payload["id"], Cart.is_delete == False)
-    cart_products = db.execute(stmt).mappings().all()
+    cart_products = db.query(Cart).filter(Cart.buyer_id == payload["id"], Cart.is_delete == False).all()
     if not cart_products:
         raise APIException(404, "20001", "product not found")
     
@@ -132,5 +131,16 @@ def update_cart(request: Request, db: Session = Depends(get_db)) -> dict:
             status_code="00000",
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            cart=cart_products
+            cart=[
+                {
+                    "cart_id": product.id,
+                    "product_id": product.product_id,
+                    "name": product.name,
+                    "type": product.type,
+                    "price": float(product.price),
+                    "count": product.count,
+                    "seller_id": product.seller_id
+                }
+                for product in cart_products
+            ]
         )

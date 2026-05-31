@@ -76,7 +76,7 @@ def add_order(request: Request, data: OrderCreateRequest, db: Session = Depends(
                         {
                             "product_id": product.id,
                             "name": product.name,
-                            # "type": product.type,
+                            "type": product.type,
                             "price": float(product.price),
                             "count": product.count
                         }
@@ -123,7 +123,7 @@ def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> 
                 {
                     "product_id": product.product_id,
                     "name": product.name,
-                    # "type": product.type,
+                    "type": product.type,
                     "price": float(product.price),
                     "count": product.count
                 }
@@ -255,7 +255,7 @@ def update_order_status(request: Request, OrderId: str, data: OrderUpdateStatusR
                 {
                     "product_id": product.product_id,
                     "name": product.name,
-                    # "type": product.type,
+                    "type": product.type,
                     "price": float(product.price),
                     "count": product.count
                 }
@@ -296,7 +296,7 @@ def update_order_status(request: Request, OrderId: str, data: OrderUpdateStatusR
                 {
                     "product_id": product.product_id,
                     "name": product.name,
-                    # "type": product.type,
+                    "type": product.type,
                     "price": float(product.price),
                     "count": product.count
                 }
