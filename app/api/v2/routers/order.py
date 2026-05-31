@@ -97,7 +97,7 @@ def add_order(request: Request, data: OrderCreateRequest, db: Session = Depends(
     )
 
 
-@router.get("/{OrderId}", response_model=APIResponse, response_model_exclude_none=True)
+@router.get("/order/{OrderId}", response_model=APIResponse, response_model_exclude_none=True)
 def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
@@ -148,19 +148,78 @@ def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> 
         raise APIException(403, "00004", "forbidden")
 
 
-@router.get("/me")
-def get_my_orders(
-    db: Session = Depends(get_db)
-) -> dict:
+@router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
+def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] == "buyer":
+        orders = db.query(Order).filter(Order.buyer_id == payload["id"]).all()
 
-    return APIResponse(
-        status_code="00000",
-        desc="get my orders",
-        response_datetime=datetime.utcnow(),
-    )
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order=[
+                {
+                    "order_id": order.id,
+                    "buyer_id": order.buyer_id,
+                    "seller_id": order.seller_id,
+                    "driver_id": order.driver_id,
+                    "from_addr": order.from_address,
+                    "to_addr": order.to_address,
+                    "order_status": order.order_status.value,
+                    "total_price": float(order.total_price)
+                }
+                for order in orders
+            ]
+        )
+    elif payload["role"] == "seller":
+        orders = db.query(Order).filter(Order.seller_id == payload["id"]).all()
+
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order=[
+                {
+                    "order_id": order.id,
+                    "buyer_id": order.buyer_id,
+                    "seller_id": order.seller_id,
+                    "driver_id": order.driver_id,
+                    "from_addr": order.from_address,
+                    "to_addr": order.to_address,
+                    "order_status": order.order_status.value,
+                    "total_price": float(order.total_price)
+                }
+                for order in orders
+            ]
+        )
+    elif payload["role"] == "driver":
+        orders = db.query(Order).filter(Order.driver_id == payload["id"]).all()
+
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order=[
+                {
+                    "order_id": order.id,
+                    "buyer_id": order.buyer_id,
+                    "seller_id": order.seller_id,
+                    "driver_id": order.driver_id,
+                    "from_addr": order.from_address,
+                    "to_addr": order.to_address,
+                    "order_status": order.order_status.value,
+                    "total_price": float(order.total_price)
+                }
+                for order in orders
+            ]
+        )
+    else:
+        raise APIException(403, "00004", "forbidden")
 
 
-@router.put("/{OrderId}")
+@router.put("/order/{OrderId}")
 def update_order_status(
     OrderId: str,
     data: OrderUpdateStatusRequest,
