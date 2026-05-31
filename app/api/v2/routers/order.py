@@ -88,7 +88,6 @@ def add_order(request: Request, data: OrderCreateRequest, db: Session = Depends(
     except:
         db.rollback()
         raise APIException(500, "20010", "new order failed")
-    db.refresh(new_order)
         
     return APIResponse(
         status_code="00000",
@@ -98,17 +97,55 @@ def add_order(request: Request, data: OrderCreateRequest, db: Session = Depends(
     )
 
 
-@router.get("/{OrderId}")
-def get_order(
-    OrderId: str,
-    db: Session = Depends(get_db)
-) -> dict:
-
-    return APIResponse(
-        status_code="00000",
-        desc="get order",
-        response_datetime=datetime.utcnow(),
-    )
+@router.get("/{OrderId}", response_model=APIResponse, response_model_exclude_none=True)
+def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    order = db.query(Order).filter(Order.id == OrderId).first()
+    if order is None:
+        raise APIException(404, "20004", "order not found")
+    if payload["role"] == "buyer" and order.buyer_id == payload["id"] or payload["role"] == "seller" and order.seller_id == payload["id"]:
+        products = order.selled_products
+        
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order_id=order.id,
+            buyer_id=order.buyer_id,
+            seller_id=order.seller_id,
+            driver_id=order.driver_id,
+            from_addr=order.from_address,
+            to_addr=order.to_address,
+            order_status=order.order_status.value,
+            total_price=float(order.total_price),
+            product=[
+                {
+                    "product_id": product.product_id,
+                    "name": product.name,
+                    # "type": product.type,
+                    "price": float(product.price),
+                    "count": product.count
+                }
+                for product in products
+            ]
+        )
+    elif payload["role"] == "driver" and order.driver_id == payload["id"]:
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order_id=order.id,
+            buyer_id=order.buyer_id,
+            seller_id=order.seller_id,
+            driver_id=order.driver_id,
+            from_addr=order.from_address,
+            to_addr=order.to_address,
+            order_status=order.order_status.value,
+            total_price=float(order.total_price)
+        )
+    else:
+        raise APIException(403, "00004", "forbidden")
 
 
 @router.get("/me")

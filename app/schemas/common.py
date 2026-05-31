@@ -35,7 +35,6 @@ class APIResponse(BaseModel):
     desc: Optional[str] = None
     type: Optional[str] = None
     product_url: Optional[str] = None
-    product: Optional[list[ProductResponse]] = None
     cart_id: Optional[str] = None
     buyer_id: Optional[str] = None
     seller_id: Optional[str] = None
@@ -44,6 +43,7 @@ class APIResponse(BaseModel):
     to_addr: Optional[str] = None
     order_status: Optional[str] = None
     total_price: Optional[float] = None
+    product: Optional[list] = None
     count: Optional[int] = None
     order: Optional[list] = None
     is_first_login: Optional[bool] = None
