@@ -139,15 +139,20 @@ def update_product_type(request: Request, ProductId: str, data: ProductTypeUpdat
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
+    if data.price <= 0 or data.stock < 0:
+        raise APIException(400, "20009", "number invalid")
     product = db.query(Product).filter(Product.id == ProductId, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     same_product = db.query(Product).filter(Product.pid == product.pid, Product.type == data.type, Product.seller_id == payload["id"], Product.is_delete == False).first()
-    if same_product is not None:
+    if same_product is not None and same_product.id != ProductId:
         raise APIException(400, "20007", "product existed")
     product.price = data.price
+    cart_products = product.carts
+    for cp in cart_products:
+        cp.price = data.price
     product.stock = data.stock
     product.status = data.status
     product.desc = data.desc
@@ -179,13 +184,16 @@ def delete_product(request: Request, PId: str, db: Session = Depends(get_db)) ->
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
-    products = db.query(Product).filter(Product.pid == PId, Product.is_delete == False).all()
+    products = db.query(Product).filter(Product.pid == PId, Product.seller_id == payload["id"], Product.is_delete == False).all()
     if not products:
         raise APIException(404, "20001", "product not found")
     if products[0].seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     for p in products:
         p.is_delete = True
+        cart_products = p.carts
+        for cp in cart_products:
+            cp.is_delete = True
     db.commit()
 
     return APIResponse(
@@ -207,6 +215,9 @@ def delete_product_type(request: Request, ProductId: str, db: Session = Depends(
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     product.is_delete = True
+    cart_products = product.carts
+    for cp in cart_products:
+        cp.is_delete = True
     db.commit()
     db.refresh(product)
 

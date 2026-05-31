@@ -125,7 +125,7 @@ def update_cart(request: Request, db: Session = Depends(get_db)) -> dict:
         raise APIException(403, "00004", "forbidden")
     cart_products = db.query(Cart).filter(Cart.buyer_id == payload["id"], Cart.is_delete == False).all()
     if not cart_products:
-        raise APIException(404, "20001", "product not found")
+        raise APIException(404, "20011", "no product in cart")
     
     return APIResponse(
             status_code="00000",
