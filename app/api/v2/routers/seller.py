@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from typing import Optional
+from fastapi import APIRouter, Request, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.schemas.seller import SellerUpdateRequest
@@ -7,30 +6,37 @@ from app.db.session import get_db
 from app.models.model import Seller
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
-from app.core.deps import return_payload
+from app.core.deps import verify_token, return_payload
 import pytz
 
 router = APIRouter()
 
-@router.get("/me")
+
+@router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
 def get_seller_me(
-    seller_id: Optional[str] = None,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(return_payload)
+    request: Request,
+    db: Session = Depends(get_db)
 ):
-    token_id = payload.get("id")
-    if payload.get("role") != "seller" or not token_id:
+    verify_token(request)
+    payload = return_payload(request)
+
+    if payload["role"] != "seller":
         raise APIException(403, "10008", "permission denied")
-    if seller_id is not None and seller_id != token_id:
-        raise APIException(403, "10008", "permission denied")
-    seller = db.query(Seller).filter(Seller.id == token_id, Seller.is_delete == False).first()
+
+    token_id = payload["id"]
+
+    seller = db.query(Seller).filter(
+        Seller.id == token_id,
+        Seller.is_delete == False
+    ).first()
+
     if not seller:
         raise APIException(404, "10001", "seller not found")
 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.now(pytz.timezone("Asia/Taipei")),
         user_id=seller.id,
         email=seller.email,
         phone=seller.phone,
@@ -41,19 +47,25 @@ def get_seller_me(
     )
 
 
-@router.put("/me")
+@router.put("/me", response_model=APIResponse, response_model_exclude_none=True)
 def update_seller_me(
+    request: Request,
     data: SellerUpdateRequest,
-    seller_id: Optional[str] = None,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(return_payload)
+    db: Session = Depends(get_db)
 ):
-    token_id = payload.get("id")
-    if payload.get("role") != "seller" or not token_id:
+    verify_token(request)
+    payload = return_payload(request)
+
+    if payload["role"] != "seller":
         raise APIException(403, "10008", "permission denied")
-    if seller_id is not None and seller_id != token_id:
-        raise APIException(403, "10008", "permission denied")
-    seller = db.query(Seller).filter(Seller.id == token_id, Seller.is_delete == False).first()
+
+    token_id = payload["id"]
+
+    seller = db.query(Seller).filter(
+        Seller.id == token_id,
+        Seller.is_delete == False
+    ).first()
+
     if not seller:
         raise APIException(404, "10001", "seller not found")
 
@@ -70,7 +82,8 @@ def update_seller_me(
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.now(pytz.timezone("Asia/Taipei")),
+        user_id=seller.id,
         email=seller.email,
         phone=seller.phone,
         name=seller.name,
@@ -80,20 +93,26 @@ def update_seller_me(
     )
 
 
-@router.delete("/{SellerId}")
-def delete_seller(
-    SellerId: str,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(return_payload)
+@router.delete("/me", response_model=APIResponse, response_model_exclude_none=True)
+def delete_seller_me(
+    request: Request,
+    db: Session = Depends(get_db)
 ):
-    token_id = payload.get("id")
-    if payload.get("role") != "seller" or not token_id:
+    verify_token(request)
+    payload = return_payload(request)
+
+    if payload["role"] != "seller":
         raise APIException(403, "10008", "permission denied")
-    if SellerId != token_id:
-        raise APIException(403, "10008", "permission denied")
-    seller = db.query(Seller).filter(Seller.id == token_id, Seller.is_delete == False).first()
+
+    token_id = payload["id"]
+
+    seller = db.query(Seller).filter(
+        Seller.id == token_id,
+        Seller.is_delete == False
+    ).first()
+
     if not seller:
-        raise APIException(404, "10001", "not found")
+        raise APIException(404, "10001", "seller not found")
 
     seller.is_delete = True
     db.commit()
@@ -101,5 +120,5 @@ def delete_seller(
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.now(pytz.timezone("Asia/Taipei")),
     )

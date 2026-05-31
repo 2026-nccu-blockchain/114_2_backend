@@ -1,38 +1,42 @@
-from fastapi import APIRouter
-from fastapi import Depends
-from typing import Optional
+from fastapi import APIRouter, Request, Depends
 from sqlalchemy.orm import Session
-# from app.schemas.driver import
 from app.schemas.driver import DriverUpdateRequest
 from app.db.session import get_db
 from app.models.model import Driver
 from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime
-from app.core.deps import return_payload
+from app.core.deps import verify_token, return_payload
 import pytz
 
 router = APIRouter()
 
-@router.get("/me")
+
+@router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
 def get_driver_me(
-    driver_id: Optional[str] = None,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(return_payload)
+    request: Request,
+    db: Session = Depends(get_db)
 ):
-    token_id = payload.get("id")
-    if payload.get("role") != "driver" or not token_id:
+    verify_token(request)
+    payload = return_payload(request)
+
+    if payload["role"] != "driver":
         raise APIException(403, "10008", "permission denied")
-    if driver_id is not None and driver_id != token_id:
-        raise APIException(403, "10008", "permission denied")
-    driver = db.query(Driver).filter(Driver.id == token_id, Driver.is_delete == False).first()
+
+    token_id = payload["id"]
+
+    driver = db.query(Driver).filter(
+        Driver.id == token_id,
+        Driver.is_delete == False
+    ).first()
+
     if not driver:
         raise APIException(404, "10001", "driver not found")
 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.now(pytz.timezone("Asia/Taipei")),
         user_id=driver.id,
         email=driver.email,
         phone=driver.phone,
@@ -40,19 +44,25 @@ def get_driver_me(
     )
 
 
-@router.put("/me")
+@router.put("/me", response_model=APIResponse, response_model_exclude_none=True)
 def update_driver_me(
+    request: Request,
     data: DriverUpdateRequest,
-    driver_id: Optional[str] = None,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(return_payload)
+    db: Session = Depends(get_db)
 ):
-    token_id = payload.get("id")
-    if payload.get("role") != "driver" or not token_id:
+    verify_token(request)
+    payload = return_payload(request)
+
+    if payload["role"] != "driver":
         raise APIException(403, "10008", "permission denied")
-    if driver_id is not None and driver_id != token_id:
-        raise APIException(403, "10008", "permission denied")
-    driver = db.query(Driver).filter(Driver.id == token_id, Driver.is_delete == False).first()
+
+    token_id = payload["id"]
+
+    driver = db.query(Driver).filter(
+        Driver.id == token_id,
+        Driver.is_delete == False
+    ).first()
+
     if not driver:
         raise APIException(404, "10001", "driver not found")
 
@@ -66,27 +76,34 @@ def update_driver_me(
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.now(pytz.timezone("Asia/Taipei")),
+        user_id=driver.id,
         email=driver.email,
         phone=driver.phone,
         name=driver.name,
     )
 
 
-@router.delete("/{DriverId}")
-def delete_driver(
-    DriverId: str,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(return_payload)
+@router.delete("/me", response_model=APIResponse, response_model_exclude_none=True)
+def delete_driver_me(
+    request: Request,
+    db: Session = Depends(get_db)
 ):
-    token_id = payload.get("id")
-    if payload.get("role") != "driver" or not token_id:
+    verify_token(request)
+    payload = return_payload(request)
+
+    if payload["role"] != "driver":
         raise APIException(403, "10008", "permission denied")
-    if DriverId != token_id:
-        raise APIException(403, "10008", "permission denied")
-    driver = db.query(Driver).filter(Driver.id == token_id, Driver.is_delete == False).first()
+
+    token_id = payload["id"]
+
+    driver = db.query(Driver).filter(
+        Driver.id == token_id,
+        Driver.is_delete == False
+    ).first()
+
     if not driver:
-        raise APIException(404, "10001", "not found")
+        raise APIException(404, "10001", "driver not found")
 
     driver.is_delete = True
     db.commit()
@@ -94,5 +111,5 @@ def delete_driver(
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        response_datetime=datetime.now(pytz.timezone("Asia/Taipei")),
     )
