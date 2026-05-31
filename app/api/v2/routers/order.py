@@ -219,15 +219,112 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
         raise APIException(403, "00004", "forbidden")
 
 
-@router.put("/order/{OrderId}")
-def update_order_status(
-    OrderId: str,
-    data: OrderUpdateStatusRequest,
-    db: Session = Depends(get_db)
-) -> dict:
+@router.put("/order/{OrderId}", response_model=APIResponse, response_model_exclude_none=True)
+def update_order_status(request: Request, OrderId: str, data: OrderUpdateStatusRequest, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+    order = db.query(Order).filter(Order.id == OrderId).first()
+    if order is None:
+        raise APIException(404, "20004", "order not found")
+    if payload["role"] == "buyer" and order.buyer_id == payload["id"]:
+        if data.status == "refund" and order.order_status != OrderStatus.FAIL:
+            order.order_status = OrderStatus.REFUND
+            selled_products = order.selled_products
+            for sp in selled_products:
+                product = sp.product
+                product.stock += sp.count
+                sp.is_refund = True
+        else:
+            raise APIException(403, "00004", "forbidden")
+        db.commit()
+        db.refresh(order)
 
-    return APIResponse(
-        status_code="00000",
-        desc="order updated",
-        response_datetime=datetime.utcnow(),
-    )
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order_id=order.id,
+            buyer_id=order.buyer_id,
+            seller_id=order.seller_id,
+            driver_id=order.driver_id,
+            from_addr=order.from_address,
+            to_addr=order.to_address,
+            order_status=order.order_status.value,
+            total_price=float(order.total_price),
+            product=[
+                {
+                    "product_id": product.product_id,
+                    "name": product.name,
+                    # "type": product.type,
+                    "price": float(product.price),
+                    "count": product.count
+                }
+                for product in selled_products
+            ]
+        )
+    elif payload["role"] == "seller" and order.seller_id == payload["id"]:
+        if data.status == "success" and order.order_status == OrderStatus.ORDERED:
+            order.order_status = OrderStatus.SUCCESS
+        elif data.status == "fail" and order.order_status == OrderStatus.ORDERED:
+            order.order_status = OrderStatus.FAIL
+            selled_products = order.selled_products
+            for sp in selled_products:
+                product = sp.product
+                product.stock += sp.count
+                sp.is_refund = True
+        elif data.status == "packed" and order.order_status == OrderStatus.SUCCESS:
+            order.order_status = OrderStatus.PACKED
+        else:
+            raise APIException(403, "00004", "forbidden")
+        selled_products = order.selled_products
+        db.commit()
+        db.refresh(order)
+
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order_id=order.id,
+            buyer_id=order.buyer_id,
+            seller_id=order.seller_id,
+            driver_id=order.driver_id,
+            from_addr=order.from_address,
+            to_addr=order.to_address,
+            order_status=order.order_status.value,
+            total_price=float(order.total_price),
+            product=[
+                {
+                    "product_id": product.product_id,
+                    "name": product.name,
+                    # "type": product.type,
+                    "price": float(product.price),
+                    "count": product.count
+                }
+                for product in selled_products
+            ]
+        )
+    elif payload["role"] == "driver" and order.driver_id == payload["id"]:
+        if data.status == "deliver" and order.order_status == OrderStatus.PACKED:
+            order.order_status = OrderStatus.DELIVER
+        elif data.status == "arrived" and order.order_status == OrderStatus.DELIVER:
+            order.order_status = OrderStatus.ARRIVED
+        else:
+            raise APIException(403, "00004", "forbidden")
+        db.commit()
+        db.refresh(order)
+            
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order_id=order.id,
+            buyer_id=order.buyer_id,
+            seller_id=order.seller_id,
+            driver_id=order.driver_id,
+            from_addr=order.from_address,
+            to_addr=order.to_address,
+            order_status=order.order_status.value,
+            total_price=float(order.total_price)
+        )
+    else:
+        raise APIException(403, "00004", "forbidden")
