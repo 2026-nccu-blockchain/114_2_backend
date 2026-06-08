@@ -2,11 +2,11 @@
 
 ## API Version
 
-* version: v2.1.0
+* version: v2.2.0
 * base URL: `/api/v2`
 
 ### 說明
-本系統 API 採用版本控制方式管理，目前版本為 `v2.1.0`。  
+本系統 API 採用版本控制方式管理，目前版本為 `v2.2.0`。  
 所有 API 路由皆需加上版本前綴 `/api/v2`，以利未來功能擴充與版本維護。
 
 ## auth
@@ -353,6 +353,86 @@
 {
     "status_code": "10006",
     "message": "account already exists",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
+### 重設密碼
+* http methods: POST
+* router: /api/v2/auth`/password/reset/me`
+* header: `Authorization: Bearer <token>`
+* request:
+
+|   Name   | Essential |  Type  |                 Description                  |
+|:--------:|:---------:|:------:|:--------------------------------------------:|
+| password |     v     | string | 更新密碼，後端會進行 hash 加密後再存入資料庫 |
+```json
+//request example
+{
+    "password": "Apple6767"
+}
+```
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+
+// 失敗
+{
+    "status_code": "10010",
+    "message": "password is not strong",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
+### 忘記密碼
+* http methods: POST
+* router: /api/v2/auth`/password/forget`
+* request:
+
+|   Name   | Essential |  Type  |                 Description                  |
+|:--------:|:---------:|:------:|:--------------------------------------------:|
+|  email   |     v     | string |                   登入帳號                   |
+|  phone   |     v     | string |                     手機                     |
+| password |     v     | string | 更新密碼，後端會進行 hash 加密後再存入資料庫 |
+
+```json
+//request example
+{
+    "email": "123@gmail.com",
+    "phone": "0912345678",
+    "password": "Apple6767"
+}
+```
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+
+// 失敗
+{
+    "status_code": "10001",
+    "message": "not found",
     "response_datetime": "2026-03-30 21:35:30"
 }
 ```
@@ -946,23 +1026,10 @@
     "response_datetime": "2026-03-30 21:35:30"
 }
 ```
----
-## others
-### 重設密碼
-* http methods: POST
-* router: /api/v2`/password/reset/me`
+### 司機看未接訂單
+* http methods: GET
+* router: /api/v2/driver`/look`
 * header: `Authorization: Bearer <token>`
-* request:
-
-|   Name   | Essential |  Type  |                 Description                  |
-|:--------:|:---------:|:------:|:--------------------------------------------:|
-| password |     v     | string | 更新密碼，後端會進行 hash 加密後再存入資料庫 |
-```json
-//request example
-{
-    "password": "Apple6767"
-}
-```
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -970,41 +1037,38 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
+|    order    |           |  list  |    訂單陣列     |
 ```json
 // response example
 // 成功
 {
     "status_code": "00000",
     "message": "success",
-    "response_datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30",
+    "order": [
+        {
+            "order_id": "euf8ya37r",
+            "buyer_id": "38ylw3yp9fwous0",
+            "seller_id": "efu;83uf;8w",
+            "from_addr": "Japan",
+            "to_addr": "Taipei",
+            "order_status": "ordered",
+            "total_price": 250.00,
+        }
+    ]
 }
 
 // 失敗
 {
-    "status_code": "10010",
-    "message": "password is not strong",
+    "status_code": "00001",
+    "message": "fail",
     "response_datetime": "2026-03-30 21:35:30"
 }
 ```
-### 忘記密碼
+### 司機接未接訂單
 * http methods: POST
-* router: /api/v2`/password/forget`
-* request:
-
-|   Name   | Essential |  Type  |                 Description                  |
-|:--------:|:---------:|:------:|:--------------------------------------------:|
-|  email   |     v     | string |                   登入帳號                   |
-|  phone   |     v     | string |                     手機                     |
-| password |     v     | string | 更新密碼，後端會進行 hash 加密後再存入資料庫 |
-
-```json
-//request example
-{
-    "email": "123@gmail.com",
-    "phone": "0912345678",
-    "password": "Apple6767"
-}
-```
+* router: /api/v2/driver`/take/{OrderId}`
+* header: `Authorization: Bearer <token>`
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -1012,40 +1076,51 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
+|  order_id   |           | string |     訂單ID      |
+|  buyer_id   |           | string |     買家ID      |
+|  seller_id  |           | string |     賣家ID      |
+|  driver_id  |           | string |     司機ID      |
+|  from_addr  |           | string |     出貨地      |
+|   to_addr   |           | string |    送貨地點     |
+|   status    |           | string |      狀態       |
+| total_price |           | double |     總價格      |
 ```json
 // response example
 // 成功
 {
     "status_code": "00000",
     "message": "success",
-    "response_datetime": "2026-03-30 21:35:30"
+    "response_datetime": "2026-03-30 21:35:30",
+    "order_id": "38ylw3wr39dous0",
+    "buyer_id": "38ylw3yp9fwous0",
+    "seller_id": "efu;83uf;8w",
+    "driver_id": "e83ur8w3ulr",
+    "from_addr": "Japan",
+    "to_addr": "Taipei",
+    "order_status": "ordered",
+    "total_price": 250.00,
 }
 
 // 失敗
 {
-    "status_code": "10001",
-    "message": "not found",
+    "status_code": "00001",
+    "message": "fail",
     "response_datetime": "2026-03-30 21:35:30"
 }
 ```
+---
+## upload
 ### 上傳圖片
 * http methods: POST
 * router: /api/v2`/upload`
 * header: `Authorization: Bearer <token>`
 * request:
 
-| Name  | Essential |  Type  | Description |
-|:-----:|:---------:|:------:|:-----------:|
-| email |     v     | string |  登入帳號   |
+| Name  | Essential | Type | Description |
+|:-----:|:---------:|:----:|:-----------:|
+| image |     v     | file |  傳入圖片   |
 
-```json
-//request example
-{
-    "email": "123@gmail.com",
-    "phone": "0912345678",
-    "password": "Apple6767"
-}
-```
+`使用form-data`
 * response:
 
 |    Name     | Essential |  Type  |   Description   |
@@ -1073,6 +1148,9 @@
 ```
 ---
 ## product
+* product_id、ProductId：都是商品的uuid
+* pid、PId：都是商品編號id
+* 同商品不同類型：pid一樣、product_id不一樣
 ### 賣家上架商品
 * http methods: POST
 * router: /api/v2/products`/product`
@@ -1106,7 +1184,7 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
-|    uuid     |           | string |    商品uuid     |
+| product_id  |           | string |    商品uuid     |
 |     pid     |           | string |     商品ID      |
 |    name     |           | string |    商品名稱     |
 |    price    |           | double |    商品價格     |
@@ -1123,7 +1201,7 @@
     "status_code": "00000",
     "message": "success",
     "response_datetime": "2026-03-30 21:35:30",
-    "uuid": "efrwofiefjsuefwe",
+    "prodduct_id": "efrwofiefjsuefwe",
     "pid": "P4384384513",
     "name": "rice",
     "price": 50.00,
@@ -1144,7 +1222,7 @@
 ```
 ### 賣家增加商品種類
 * http methods: POST
-* router: /api/v2/products`/type/{ProductId}`
+* router: /api/v2/products`/type/{PId}`
 * header: `Authorization: Bearer <token>`
 * request:
 
@@ -1173,7 +1251,7 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
-|    uuid     |           | string |    商品uuid     |
+| product_id  |           | string |    商品uuid     |
 |     pid     |           | string |     商品ID      |
 |    name     |           | string |    商品名稱     |
 |    price    |           | double |    商品價格     |
@@ -1190,7 +1268,7 @@
     "status_code": "00000",
     "message": "success",
     "response_datetime": "2026-03-30 21:35:30",
-    "uuid": "efrwofiefjsuefwe",
+    "product_id": "efrwofiefjsuefwe",
     "pid": "P4384384513",
     "name": "rice",
     "price": 50.00,
@@ -1211,7 +1289,7 @@
 ```
 ### 賣家編輯商品
 * http methods: PUT
-* router: /api/v2/products`/product/{ProductId}`
+* router: /api/v2/products`/product/{PId}`
 * header: `Authorization: Bearer <token>`
 * request:
 
@@ -1252,7 +1330,7 @@
 ```
 ### 賣家更新商品種類
 * http methods: PUT
-* router: /api/v2/products`/type/{uuid}`
+* router: /api/v2/products`/type/{ProductId}`
 * header: `Authorization: Bearer <token>`
 * request:
 
@@ -1282,7 +1360,7 @@
 | status code |     v     | string | API執行狀態代碼 |
 |   message   |     v     | string | API執行狀態說明 |
 |  datetime   |     v     | string |    回傳時間     |
-|    uuid     |           | string |    商品uuid     |
+| product_id  |           | string |    商品uuid     |
 |     pid     |           | string |     商品ID      |
 |    name     |           | string |    商品名稱     |
 |    price    |           | double |    商品價格     |
@@ -1299,7 +1377,7 @@
     "status_code": "00000",
     "message": "success",
     "response_datetime": "2026-03-30 21:35:30",
-    "uuid": "efrwofiefjsuefwe",
+    "product_id": "efrwofiefjsuefwe",
     "pid": "P4384384513",
     "name": "rice",
     "price": 50.00,
@@ -1320,7 +1398,7 @@
 ```
 ### 賣家刪除商品
 * http methods: DELETE
-* router: /api/v2/products`/product/{ProductId}`
+* router: /api/v2/products`/product/{PId}`
 * header: `Authorization: Bearer <token>`
 * response:
 
@@ -1347,7 +1425,7 @@
 ```
 ### 賣家刪除商品類型
 * http methods: DELETE
-* router: /api/v2/products`/type/{uuid}`
+* router: /api/v2/products`/type/{ProductId}`
 * header: `Authorization: Bearer <token>`
 * response:
 
@@ -1374,7 +1452,7 @@
 ```
 ### 查看商品
 * http methods: GET
-* router: /api/v2/products`/product/{ProductId}`
+* router: /api/v2/products`/product/{PId}`
 * header: `Authorization: Bearer <token>`
 * response:
 
@@ -1393,7 +1471,7 @@
     "response_datetime": "2026-03-30 21:35:30",
     "product": [
         {
-            "uuid": "efloiehflawefl",
+            "product_id": "efloiehflawefl",
             "pid": "P4384384513",
             "name": "rice",
             "price": 50.00,
@@ -1436,7 +1514,7 @@
     "response_datetime": "2026-03-30 21:35:30",
     "product": [
         {
-            "uuid": "efloiehflawefl",
+            "product_id": "efloiehflawefl",
             "pid": "P4384384513",
             "name": "rice",
             "price": 50.00,
@@ -1461,27 +1539,17 @@
 ## order
 ### 買家新增訂單
 * http methods: POST
-* router: /api/v2/order`/add`
+* router: /api/v2/orders`/order`
 * header: `Authorization: Bearer <token>`
 * request:
 
-|     Name     | Essential |  Type  | Description |
-|:------------:|:---------:|:------:|:-----------:|
-|   buyer_id   |     v     | string |   買家ID    |
-|  seller_id   |     v     | string |   賣家ID    |
-|   to_addr    |     v     | string |  送貨地點   |
-| order_status |     v     | string |    狀態     |
-|  product_id  |     v     |  list  |   商品ID    |
-|    count     |     v     |  list  |  購買數量   |
+|  Name   | Essential |  Type  | Description |
+|:-------:|:---------:|:------:|:-----------:|
+| to_addr |     v     | string |  送貨地點   |
 ```json
 //request example
 {
-    "buyer_id": "38ylw3yp9fwous0",
-    "seller_id": "efu;83uf;8w",
-    "to_addr": "Taipei",
-    "order_status": "ordered",
-    "product_id": ["3ua83u83r"],
-    "count": [5]
+    "to_addr": "Taipei"
 }
 ```
 * response:
@@ -1497,51 +1565,7 @@
 |   to_addr    |           | string |                             送貨地點                             |
 | order_status |           | string |                               狀態                               |
 | total_price  |           | double |                              總價格                              |
-|   product    |           |  list  | 商品陣列(裡面有producet_id、name、type、price、count、seller_id) |
-```json
-// response example
-// 成功
-{
-    "status_code": "00000",
-    "message": "success",
-    "response_datetime": "2026-03-30 21:35:30",
-    "order_id": "wu3ry37ry73awueff",
-    "buyer_id": "38ylw3yp9fwous0",
-    "seller_id": "efu;83uf;8w",
-    "to_addr": "Taipei",
-    "order_status": "ordered",
-    "total_price": 250.00,
-    "product":[
-        {
-            "product_id": "eihfl73y9",
-            "name": "rice",
-            "type": "white",
-            "price": 50.00,
-            "count": 5,
-            "seller_id": "ehl72ry8ef",
-        }
-    ]
-}
-
-// 失敗
-{
-    "status_code": "20002",
-    "message": "product out of stock",
-    "datetime": "2026-03-30 21:35:30"
-}
-```
-### 司機看未接訂單
-* http methods: GET
-* router: /api/v2/order`/driver/look`
-* header: `Authorization: Bearer <token>`
-* response:
-
-|    Name     | Essential |  Type  |   Description   |
-|:-----------:|:---------:|:------:|:---------------:|
-| status code |     v     | string | API執行狀態代碼 |
-|   message   |     v     | string | API執行狀態說明 |
-|  datetime   |     v     | string |    回傳時間     |
-|    order    |           |  list  |    訂單陣列     |
+|   product    |           |  list  | 商品陣列(裡面有producet_uuid、name、type、price、count、seller_id) |
 ```json
 // response example
 // 成功
@@ -1551,10 +1575,10 @@
     "response_datetime": "2026-03-30 21:35:30",
     "order": [
         {
-            "order_id": "euf8ya37r",
+            "order_id": "wu3ry37ry73awueff",
             "buyer_id": "38ylw3yp9fwous0",
             "seller_id": "efu;83uf;8w",
-            "from_addr": "Japan",
+            "from_addr": "eduefakeifgk",
             "to_addr": "Taipei",
             "order_status": "ordered",
             "total_price": 250.00,
@@ -1565,7 +1589,6 @@
                     "type": "white",
                     "price": 50.00,
                     "count": 5,
-                    "seller_id": "ehl72ry8ef", 
                 }
             ]
         }
@@ -1574,74 +1597,9 @@
 
 // 失敗
 {
-    "status_code": "00001",
-    "message": "fail",
-    "response_datetime": "2026-03-30 21:35:30"
-}
-```
-### 司機接未接訂單
-* http methods: POST
-* router: ==/api/v2/order`/driver/look/take/{OrderId}`==
-* header: `Authorization: Bearer <token>`
-* request:
-
-|   Name    | Essential |  Type  | Description |
-|:---------:|:---------:|:------:|:-----------:|
-| driver_id |     v     | string |   司機ID    |
-```json
-//request example
-{
-    "driver_id": "3ral3yrl7"
-}
-```
-* response:
-
-|    Name     | Essential |  Type  |                 Description                 |
-|:-----------:|:---------:|:------:|:-------------------------------------------:|
-| status code |     v     | string |               API執行狀態代碼               |
-|   message   |     v     | string |               API執行狀態說明               |
-|  datetime   |     v     | string |                  回傳時間                   |
-|  order_id   |           | string |                   訂單ID                    |
-|  buyer_id   |           | string |                   買家ID                    |
-|  seller_id  |           | string |                   賣家ID                    |
-|  driver_id  |           | string |                   司機ID                    |
-|  from_addr  |           | string |                   出貨地                    |
-|   to_addr   |           | string |                  送貨地點                   |
-|   status    |           | string |                    狀態                     |
-| total_price |           | double |                   總價格                    |
-|   product   |           |  list  | 商品陣列(裡面有name、type、price、sellerID) |
-```json
-// response example
-// 成功
-{
-    "status_code": "00000",
-    "message": "success",
-    "response_datetime": "2026-03-30 21:35:30",
-    "order_id": "38ylw3wr39dous0",
-    "buyer_id": "38ylw3yp9fwous0",
-    "seller_id": "efu;83uf;8w",
-    "driver_id": "e83ur8w3ulr",
-    "from_addr": "Japan",
-    "to_addr": "Taipei",
-    "order_status": "ordered",
-    "total_price": 250.00,
-    "product":[
-        {
-            "product_id": "eihfl73y9",
-            "name": "rice",
-            "type": "white",
-            "price": 50.00,
-            "count": 5,
-            "seller_id": "ehl72ry8ef",
-        }
-    ]
-}
-
-// 失敗
-{
-    "status_code": "00001",
-    "message": "fail",
-    "response_datetime": "2026-03-30 21:35:30"
+    "status_code": "20002",
+    "message": "product out of stock",
+    "datetime": "2026-03-30 21:35:30"
 }
 ```
 ### 查看訂單(司機、賣家、買家)
@@ -1666,7 +1624,7 @@
 |   product   |           |  list  | 商品陣列(裡面有name、type、price、sellerID) |
 ```json
 // response example
-// 成功
+// 成功(買家、賣家)
 {
     "status_code": "00000",
     "message": "success",
@@ -1686,9 +1644,23 @@
             "type": "white",
             "price": 50.00,
             "count": 5,
-            "seller_id": "ehl72ry8ef",
         }
     ]
+}
+
+// 成功(司機)
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "order_id": "wu3ry37ry73awueff",
+    "buyer_id": "38ylw3yp9fwous0",
+    "seller_id": "efu;83uf;8w",
+    "driver_id": "e83ur8w3ulr",
+    "from_addr": "Japan",
+    "to_addr": "Taipei",
+    "order_status": "ordered",
+    "total_price": 250.00
 }
 
 // 失敗
@@ -1781,7 +1753,7 @@
 |   product   |           |  list  | 商品陣列(裡面有name、type、price、sellerID) |
 ```json
 // response example
-// 成功
+// 成功(買家、賣家)
 {
     "status_code": "00000",
     "message": "success",
@@ -1801,9 +1773,23 @@
             "type": "white",
             "price": 50.00,
             "count": 5,
-            "seller_id": "ehl72ry8ef",
         }
     ]
+}
+
+// 成功(司機)
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "order_id": "wu3ry37ry73awueff",
+    "buyer_id": "38ylw3yp9fwous0",
+    "seller_id": "efu;83uf;8w",
+    "driver_id": "e83ur8w3ulr",
+    "from_addr": "Japan",
+    "to_addr": "Taipei",
+    "order_status": "ordered",
+    "total_price": 250.00
 }
 
 // 失敗
@@ -1815,7 +1801,177 @@
 ```
 ---
 ## cart
+### 買家將商品放入購物車
+* http methods: POST
+* router: /api/v2/carts`/cart`
+* header: `Authorization: Bearer <token>`
+* request:
 
+|    Name    | Essential |  Type  | Description |
+|:----------:|:---------:|:------:|:-----------:|
+| product_id |     v     | string |   商品ID    |
+|   count    |     v     | string |  購買數量   |
+```json
+//request example
+{
+    "product_id": "3ua83u83r",
+    "count": 5
+}
+```
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+|   cart_id   |           | string |    購物車ID     |
+| product_id  |           | string |    商品uuid     |
+|    name     |           | string |    商品名稱     |
+|    type     |           | string |    商品類型     |
+|    price    |           | double |      價格       |
+|    conut    |           |  int   |    商品數量     |
+|  seller_id  |           | string |     賣家ID      |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "cart_id": "wu3ry37ry73awueff",
+    "product_id": "3ua83u83r",
+    "name": "rice",
+    "type": "white",
+    "price": 250.00,
+    "count": 5,
+    "seller_id": "ehl72ry8ef",
+}
+
+// 失敗
+{
+    "status_code": "20002",
+    "message": "product out of stock",
+    "datetime": "2026-03-30 21:35:30"
+}
+```
+### 買家更新購物車內商品
+* http methods: PUT
+* router: /api/v2/carts`/cart/{CartId}`
+* header: `Authorization: Bearer <token>`
+* request:
+
+| Name  | Essential |  Type  | Description |
+|:-----:|:---------:|:------:|:-----------:|
+| count |     v     | string |  購買數量   |
+```json
+//request example
+{
+    "count": 5
+}
+```
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+|   cart_id   |           | string |    購物車ID     |
+| product_id  |           | string |    商品uuid     |
+|    name     |           | string |    商品名稱     |
+|    type     |           | string |    商品類型     |
+|    price    |           | double |      價格       |
+|    conut    |           |  int   |    商品數量     |
+|  seller_id  |           | string |     賣家ID      |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "cart_id": "wu3ry37ry73awueff",
+    "product_id": "3ua83u83r",
+    "name": "rice",
+    "type": "white",
+    "price": 250.00,
+    "count": 5,
+    "seller_id": "ehl72ry8ef",
+}
+
+// 失敗
+{
+    "status_code": "20002",
+    "message": "product out of stock",
+    "datetime": "2026-03-30 21:35:30"
+}
+```
+### 買家刪除購物車商品
+* http methods: DELETE
+* router: /api/v2/carts`/cart/{CartId}`
+* header: `Authorization: Bearer <token>`
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+
+// 失敗
+{
+    "status_code": "10001",
+    "message": "not found",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
+### 買家查看購物車商品
+* http methods: GET
+* router: /api/v2/carts`/me`
+* header: `Authorization: Bearer <token>`
+* response:
+
+|    Name     | Essential |  Type  |   Description   |
+|:-----------:|:---------:|:------:|:---------------:|
+| status code |     v     | string | API執行狀態代碼 |
+|   message   |     v     | string | API執行狀態說明 |
+|  datetime   |     v     | string |    回傳時間     |
+```json
+// response example
+// 成功
+{
+    "status_code": "00000",
+    "message": "success",
+    "response_datetime": "2026-03-30 21:35:30",
+    "cart": [
+        {
+            "cart_id": "wu3ry37ry73awueff",
+            "product_id": "3ua83u83r",
+            "name": "rice",
+            "type": "white",
+            "price": 250.00,
+            "count": 5,
+            "seller_id": "ehl72ry8ef",
+        }
+    ]
+}
+
+// 失敗
+{
+    "status_code": "10001",
+    "message": "not found",
+    "response_datetime": "2026-03-30 21:35:30"
+}
+```
 ---
 ## 狀態訊息表
 > 說明：
@@ -1856,16 +2012,19 @@
 
 ### 🔹 商品 / 交易模組（20000～29999）
 
-| Status Code | Message              | Description  |
-| ----------- | -------------------- | ------------ |
-| 20001       | product_not_found    | 找不到商品   |
-| 20002       | product_out_of_stock | 商品庫存不足 |
-| 20003       | payment_denied       | 付款被拒絕   |
-| 20004       | order_not_found      | 找不到訂單   |
-| 20005       | refund_denied        | 退款被拒絕   |
-| 20006       | refund_processed     | 已退款       |
-| 20007       | product_existed      | 商品已存在   |
-| 20008       | add_product_fail     | 新增商品失敗 |
+| Status Code | Message              | Description    |
+| ----------- | -------------------- | -------------- |
+| 20001       | product_not_found    | 找不到商品     |
+| 20002       | product_out_of_stock | 商品庫存不足   |
+| 20003       | product_can't_buy    | 商品無法購買   |
+| 20004       | order_not_found      | 找不到訂單     |
+| 20005       | refund_denied        | 退款被拒絕     |
+| 20006       | refund_processed     | 已退款         |
+| 20007       | product_existed      | 商品已存在     |
+| 20008       | add_product_fail     | 新增商品失敗   |
+| 20009       | number_invalid       | 數字格式不對   |
+| 20010       | new_order_failed     | 新增訂單失敗   |
+| 20011       | no_product_in_cart   | 購物車內沒商品 |
 
 ---
 

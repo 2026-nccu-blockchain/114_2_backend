@@ -17,6 +17,7 @@ from app.schemas.auth import (
     PasswordResetRequest,
     PasswordForgetRequest
 )
+import pytz
 
 router = APIRouter()
 
@@ -52,7 +53,7 @@ def admin_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
         is_first_login=is_first_login
     )
@@ -79,7 +80,7 @@ def admin_register(data: AdminRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 
@@ -98,7 +99,7 @@ def buyer_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
     )
 
@@ -130,7 +131,7 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 
@@ -155,7 +156,7 @@ def seller_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
         is_first_login=is_first_login
     )
@@ -190,7 +191,7 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 
@@ -215,7 +216,7 @@ def driver_login(data: LoginRequest, db: Session = Depends(get_db)) -> dict:
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
         token=token,
         is_first_login=is_first_login
     )
@@ -247,7 +248,7 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
     return APIResponse(
         status_code="00000",
         message="success",
-        response_datetime=datetime.utcnow() +  timedelta(hours=8),
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
     )
 
 @router.post("/password/reset/me")
@@ -255,8 +256,8 @@ def reset_password(data: PasswordResetRequest, db: Session = Depends(get_db)):
     # TODO: auth 完成後，用 token 找目前登入使用者
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow()
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei'))
     )
 
 
@@ -276,6 +277,6 @@ def forget_password(data: PasswordForgetRequest, db: Session = Depends(get_db)):
 
     return APIResponse(
         status_code="00000",
-        desc="success",
-        response_datetime=datetime.utcnow()
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei'))
     )

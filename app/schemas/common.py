@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
-from app.schemas.product import ProductResponse
 
 
 # 合法請求的回應格式
@@ -13,8 +12,6 @@ class APIResponse(BaseModel):
     # 其他欄位依需求加
     token: Optional[str] = None
     uuid: Optional[str] = None
-    pid: Optional[str] = None
-    oid: Optional[str] = None
     email: Optional[str] = None
     name: Optional[str] = None
     phone: Optional[str] = None
@@ -23,6 +20,10 @@ class APIResponse(BaseModel):
     company_address: Optional[str] = None
     company_phone: Optional[str] = None
     company_name: Optional[str] = None
+    product_id: Optional[str] = None
+    order_id: Optional[str] = None
+    pid: Optional[str] = None
+    oid: Optional[str] = None
     buyer: Optional[list] = None
     seller: Optional[list] = None
     driver: Optional[list] = None
@@ -32,20 +33,21 @@ class APIResponse(BaseModel):
     desc: Optional[str] = None
     type: Optional[str] = None
     product_url: Optional[str] = None
-    product: Optional[list[ProductResponse]] = None
-    order_status: Optional[str] = None
+    cart_id: Optional[str] = None
     buyer_id: Optional[str] = None
     seller_id: Optional[str] = None
     driver_id: Optional[str] = None
-    order_id: Optional[str] = None
-    to_addr: Optional[str] = None
     from_addr: Optional[str] = None
+    to_addr: Optional[str] = None
+    order_status: Optional[str] = None
     total_price: Optional[float] = None
+    product: Optional[list] = None
+    count: Optional[int] = None
     order: Optional[list] = None
     is_first_login: Optional[bool] = None
-    product_id: Optional[str] = None
     product_name: Optional[str] = None
     url: Optional[str] = None
+    cart: Optional[list] = None
 
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):
