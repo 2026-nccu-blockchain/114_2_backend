@@ -45,7 +45,7 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         status_code="00000",
         message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-        uuid=new_product.id,
+        product_id=new_product.id,
         pid=new_product.pid,
         name=new_product.name,
         price=new_product.price,
@@ -58,22 +58,22 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
     )
 
 
-@router.post("/type/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
-def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRequest, db: Session = Depends(get_db)) -> dict:
+@router.post("/type/{PId}", response_model=APIResponse, response_model_exclude_none=True)
+def add_product_type(request: Request, PId: str, data: ProductTypeCreateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
-    product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
+    product = db.query(Product).filter(Product.pid == PId, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
-    same_product = db.query(Product).filter(Product.pid == ProductId, Product.type == data.type, Product.seller_id == payload["id"], Product.is_delete == False).first()
+    same_product = db.query(Product).filter(Product.pid == PId, Product.type == data.type, Product.seller_id == payload["id"], Product.is_delete == False).first()
     if same_product is not None:
         raise APIException(400, "20007", "product existed")
     new_product_type = Product(
-        pid=ProductId,
+        pid=PId,
         name=product.name,
         price=Decimal(data.price).quantize(Decimal("0.00")),
         stock=data.stock,
@@ -92,7 +92,7 @@ def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRe
         status_code="00000",
         message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-        uuid=new_product_type.id,
+        product_id=new_product_type.id,
         pid=new_product_type.pid,
         name=new_product_type.name,
         price=new_product_type.price,
@@ -105,13 +105,13 @@ def add_product_type(request: Request, ProductId: str, data: ProductTypeCreateRe
     )
 
 
-@router.put("/product/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
-def update_product(request: Request, ProductId: str, data: ProductUpdateRequest, db: Session = Depends(get_db)) -> dict:
+@router.put("/product/{PId}", response_model=APIResponse, response_model_exclude_none=True)
+def update_product(request: Request, PId: str, data: ProductUpdateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
-    product = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).first()
+    product = db.query(Product).filter(Product.pid == PId, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
@@ -119,7 +119,7 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
     same_product = db.query(Product).filter(Product.name == data.name, Product.seller_id == payload["id"], Product.is_delete == False).first()
     if same_product is not None:
         raise APIException(400, "20007", "product existed")
-    products = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).all()
+    products = db.query(Product).filter(Product.pid == PId, Product.is_delete == False).all()
     for p in products:
         p.name = data.name
     db.commit()
@@ -133,21 +133,26 @@ def update_product(request: Request, ProductId: str, data: ProductUpdateRequest,
     )
 
 
-@router.put("/type/{uuid}", response_model=APIResponse, response_model_exclude_none=True)
-def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequest, db: Session = Depends(get_db)) -> dict:
+@router.put("/type/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
+def update_product_type(request: Request, ProductId: str, data: ProductTypeUpdateRequest, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
-    product = db.query(Product).filter(Product.id == uuid, Product.is_delete == False).first()
+    if data.price <= 0 or data.stock < 0:
+        raise APIException(400, "20009", "number invalid")
+    product = db.query(Product).filter(Product.id == ProductId, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     same_product = db.query(Product).filter(Product.pid == product.pid, Product.type == data.type, Product.seller_id == payload["id"], Product.is_delete == False).first()
-    if same_product is not None:
+    if same_product is not None and same_product.id != ProductId:
         raise APIException(400, "20007", "product existed")
     product.price = data.price
+    cart_products = product.carts
+    for cp in cart_products:
+        cp.price = data.price
     product.stock = data.stock
     product.status = data.status
     product.desc = data.desc
@@ -160,7 +165,7 @@ def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequ
         status_code="00000",
         message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-        uuid=product.id,
+        product_id=product.id,
         pid=product.pid,
         name=product.name,
         price=product.price,
@@ -173,19 +178,22 @@ def update_product_type(request: Request, uuid: str, data: ProductTypeUpdateRequ
     )
 
 
-@router.delete("/product/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
-def delete_product(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
+@router.delete("/product/{PId}", response_model=APIResponse, response_model_exclude_none=True)
+def delete_product(request: Request, PId: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
-    products = db.query(Product).filter(Product.pid == ProductId, Product.is_delete == False).all()
+    products = db.query(Product).filter(Product.pid == PId, Product.seller_id == payload["id"], Product.is_delete == False).all()
     if not products:
         raise APIException(404, "20001", "product not found")
     if products[0].seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     for p in products:
         p.is_delete = True
+        cart_products = p.carts
+        for cp in cart_products:
+            cp.is_delete = True
     db.commit()
 
     return APIResponse(
@@ -195,18 +203,21 @@ def delete_product(request: Request, ProductId: str, db: Session = Depends(get_d
     )
 
 
-@router.delete("/type/{uuid}", response_model=APIResponse, response_model_exclude_none=True)
-def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_db)) -> dict:
+@router.delete("/type/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
+def delete_product_type(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] != "seller":
         raise APIException(403, "00004", "forbidden")
-    product = db.query(Product).filter(Product.id == uuid, Product.is_delete == False).first()
+    product = db.query(Product).filter(Product.id == ProductId, Product.is_delete == False).first()
     if product is None:
         raise APIException(404, "20001", "product not found")
     if product.seller_id != payload["id"]:
         raise APIException(403, "00004", "forbidden")
     product.is_delete = True
+    cart_products = product.carts
+    for cp in cart_products:
+        cp.is_delete = True
     db.commit()
     db.refresh(product)
 
@@ -217,12 +228,10 @@ def delete_product_type(request: Request, uuid: str, db: Session = Depends(get_d
     )
 
 
-@router.get("/product/{ProductId}", response_model=APIResponse, response_model_exclude_none=True)
-def get_product(request: Request, ProductId: str, db: Session = Depends(get_db)) -> dict:
+@router.get("/product/{PId}", response_model=APIResponse, response_model_exclude_none=True)
+def get_product(request: Request, PId: str, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
-    stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
-                  ).where(Product.pid == ProductId, Product.is_delete == False)
-    products = db.execute(stmt).mappings().all()
+    products = db.query(Product).filter(Product.pid == PId, Product.is_delete == False).all()
     if not products:
         raise APIException(404, "20001", "product not found")
 
@@ -230,7 +239,21 @@ def get_product(request: Request, ProductId: str, db: Session = Depends(get_db))
         status_code="00000",
         message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-        product=products
+        product=[
+            {
+                "product_id": product.id,
+                "pid": product.pid,
+                "name": product.name,
+                "price": float(product.price),
+                "stock": product.stock,
+                "status": product.status,
+                "seller_id": product.seller_id,
+                "desc": product.desc,
+                "type": product.type,
+                "product_url": product.product_url
+            }
+            for product in products
+        ]
     )
 
 
@@ -248,7 +271,21 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
             status_code="00000",
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            product=products
+            product=[
+                {
+                    "product_id": product.id,
+                    "pid": product.pid,
+                    "name": product.name,
+                    "price": float(product.price),
+                    "stock": product.stock,
+                    "status": product.status,
+                    "seller_id": product.seller_id,
+                    "desc": product.desc,
+                    "type": product.type,
+                    "product_url": product.product_url
+                }
+                for product in products
+            ]
         )
     elif payload["role"] == "seller":
         stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
@@ -260,7 +297,21 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
             status_code="00000",
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            product=products
+            product=[
+                {
+                    "product_id": product.id,
+                    "pid": product.pid,
+                    "name": product.name,
+                    "price": float(product.price),
+                    "stock": product.stock,
+                    "status": product.status,
+                    "seller_id": product.seller_id,
+                    "desc": product.desc,
+                    "type": product.type,
+                    "product_url": product.product_url
+                }
+                for product in products
+            ]
         )
     else:
         raise APIException(403, "00004", "forbidden")
