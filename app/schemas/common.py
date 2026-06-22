@@ -50,6 +50,7 @@ class APIResponse(BaseModel):
     product_name: Optional[str] = None
     url: Optional[str] = None
     cart: Optional[list] = None
+    role: Optional[str] = None
 
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):
