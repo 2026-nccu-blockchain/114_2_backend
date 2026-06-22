@@ -37,6 +37,8 @@ class APIResponse(BaseModel):
     buyer_id: Optional[str] = None
     seller_id: Optional[str] = None
     driver_id: Optional[str] = None
+    seller_name: Optional[str] = None
+    seller_company: Optional[str] = None
     from_addr: Optional[str] = None
     to_addr: Optional[str] = None
     order_status: Optional[str] = None

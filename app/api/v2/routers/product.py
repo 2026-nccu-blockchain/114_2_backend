@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, Depends
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import select, func
+from sqlalchemy.orm import Session, joinedload
 from app.db.session import get_db
 from app.models.model import Product
 from app.core.exceptions import APIException
@@ -40,6 +40,7 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
+    seller = new_product.seller
 
     return APIResponse(
         status_code="00000",
@@ -52,6 +53,8 @@ def add_product(request: Request, data: ProductCreateRequest, db: Session = Depe
         stock=new_product.stock,
         status=new_product.status,
         seller_id=new_product.seller_id,
+        seller_name=seller.name,
+        seller_company=seller.company_name,
         desc=new_product.desc,
         type=new_product.type,
         product_url=new_product.product_url
@@ -87,6 +90,7 @@ def add_product_type(request: Request, PId: str, data: ProductTypeCreateRequest,
     db.add(new_product_type)
     db.commit()
     db.refresh(new_product_type)
+    seller = product.seller
 
     return APIResponse(
         status_code="00000",
@@ -99,6 +103,8 @@ def add_product_type(request: Request, PId: str, data: ProductTypeCreateRequest,
         stock=new_product_type.stock,
         status=new_product_type.status,
         seller_id=new_product_type.seller_id,
+        seller_name=seller.name,
+        seller_company=seller.company_name,
         desc=new_product_type.desc,
         type=new_product_type.type,
         product_url=new_product_type.product_url
@@ -160,6 +166,7 @@ def update_product_type(request: Request, ProductId: str, data: ProductTypeUpdat
     product.product_url = data.product_url
     db.commit()
     db.refresh(product)
+    seller = product.seller
 
     return APIResponse(
         status_code="00000",
@@ -172,6 +179,8 @@ def update_product_type(request: Request, ProductId: str, data: ProductTypeUpdat
         stock=product.stock,
         status=product.status,
         seller_id=product.seller_id,
+        seller_name=seller.name,
+        seller_company=seller.company_name,
         desc=product.desc,
         type=product.type,
         product_url=product.product_url
@@ -229,9 +238,8 @@ def delete_product_type(request: Request, ProductId: str, db: Session = Depends(
 
 
 @router.get("/product/{PId}", response_model=APIResponse, response_model_exclude_none=True)
-def get_product(request: Request, PId: str, db: Session = Depends(get_db)) -> dict:
-    verify_token(request)
-    products = db.query(Product).filter(Product.pid == PId, Product.is_delete == False).all()
+def get_product(PId: str, db: Session = Depends(get_db)) -> dict:
+    products = db.query(Product).options(joinedload(Product.seller)).filter(Product.pid == PId, Product.is_delete == False).all()
     if not products:
         raise APIException(404, "20001", "product not found")
 
@@ -248,6 +256,8 @@ def get_product(request: Request, PId: str, db: Session = Depends(get_db)) -> di
                 "stock": product.stock,
                 "status": product.status,
                 "seller_id": product.seller_id,
+                "seller_name": product.seller.name,
+                "seller_company": product.seller.company_name,
                 "desc": product.desc,
                 "type": product.type,
                 "product_url": product.product_url
@@ -259,38 +269,22 @@ def get_product(request: Request, PId: str, db: Session = Depends(get_db)) -> di
 
 @router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
 def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
-    verify_token(request)
-    payload = return_payload(request)
-    if payload["role"] == "buyer":
-        stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
-                  ).where(Product.is_delete == False).group_by(Product.pid)
-        products = db.execute(stmt).mappings().all()
-        if not products:
-            raise APIException(404, "20001", "product not found")
-        return APIResponse(
-            status_code="00000",
-            message="success",
-            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            product=[
-                {
-                    "product_id": product.id,
-                    "pid": product.pid,
-                    "name": product.name,
-                    "price": float(product.price),
-                    "stock": product.stock,
-                    "status": product.status,
-                    "seller_id": product.seller_id,
-                    "desc": product.desc,
-                    "type": product.type,
-                    "product_url": product.product_url
-                }
-                for product in products
-            ]
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        subq = (
+            select(
+                Product.pid,
+                func.min(Product.price).label("min_price"),
+                func.min(Product.id).label("min_id")
+            )
+            .where(Product.is_delete == False)
+            .group_by(Product.pid)
+        ).subquery()
+        stmt = (
+            select(Product)
+            .join(subq, Product.id == subq.c.min_id)
         )
-    elif payload["role"] == "seller":
-        stmt = select(Product.id, Product.pid, Product.name, Product.price, Product.stock, Product.status, Product.seller_id, Product.desc, Product.type, Product.product_url
-                  ).where(Product.seller_id == payload["id"], Product.is_delete == False).group_by(Product.pid)
-        products = db.execute(stmt).mappings().all()
+        products = db.execute(stmt).scalars().all()
         if not products:
             raise APIException(404, "20001", "product not found")
         return APIResponse(
@@ -306,6 +300,8 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
                     "stock": product.stock,
                     "status": product.status,
                     "seller_id": product.seller_id,
+                    "seller_name": product.seller.name,
+                    "seller_company": product.seller.company_name,
                     "desc": product.desc,
                     "type": product.type,
                     "product_url": product.product_url
@@ -314,4 +310,85 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
             ]
         )
     else:
-        raise APIException(403, "00004", "forbidden")
+        verify_token(request)
+        payload = return_payload(request)
+        if payload["role"] == "buyer":
+            subq = (
+                select(
+                    Product.pid,
+                    func.min(Product.price).label("min_price"),
+                    func.min(Product.id).label("min_id")
+                )
+                .where(Product.is_delete == False)
+                .group_by(Product.pid)
+            ).subquery()
+            stmt = (
+                select(Product)
+                .join(subq, Product.id == subq.c.min_id)
+            )
+            products = db.execute(stmt).scalars().all()
+            if not products:
+                raise APIException(404, "20001", "product not found")
+            return APIResponse(
+                status_code="00000",
+                message="success",
+                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                product=[
+                    {
+                        "product_id": product.id,
+                        "pid": product.pid,
+                        "name": product.name,
+                        "price": float(product.price),
+                        "stock": product.stock,
+                        "status": product.status,
+                        "seller_id": product.seller_id,
+                        "seller_name": product.seller.name,
+                        "seller_company": product.seller.company_name,
+                        "desc": product.desc,
+                        "type": product.type,
+                        "product_url": product.product_url
+                    }
+                    for product in products
+                ]
+            )
+        elif payload["role"] == "seller":
+            subq = (
+                select(
+                    Product.pid,
+                    func.min(Product.price).label("min_price"),
+                    func.min(Product.id).label("min_id")
+                )
+                .where(Product.is_delete == False)
+                .group_by(Product.pid)
+            ).subquery()
+            stmt = (
+                select(Product)
+                .join(subq, Product.id == subq.c.min_id)
+            )
+            products = db.execute(stmt).scalars().all()
+            if not products:
+                raise APIException(404, "20001", "product not found")
+            return APIResponse(
+                status_code="00000",
+                message="success",
+                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                product=[
+                    {
+                        "product_id": product.id,
+                        "pid": product.pid,
+                        "name": product.name,
+                        "price": float(product.price),
+                        "stock": product.stock,
+                        "status": product.status,
+                        "seller_id": product.seller_id,
+                        "seller_name": product.seller.name,
+                        "seller_company": product.seller.company_name,
+                        "desc": product.desc,
+                        "type": product.type,
+                        "product_url": product.product_url
+                    }
+                    for product in products
+                ]
+            )
+        else:
+            raise APIException(403, "00004", "forbidden")
