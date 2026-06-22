@@ -67,6 +67,7 @@ def add_order(request: Request, data: OrderCreateRequest, db: Session = Depends(
             order_response.append(
                 {
                     "order_id": new_order.id,
+                    "oid": new_order.oid,
                     "buyer_id": new_order.buyer_id,
                     "seller_id": new_order.seller_id,
                     "from_addr": new_order.from_address,
@@ -113,6 +114,7 @@ def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> 
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             order_id=order.id,
+            oid=order.oid,
             buyer_id=order.buyer_id,
             seller_id=order.seller_id,
             driver_id=order.driver_id,
@@ -137,6 +139,7 @@ def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> 
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             order_id=order.id,
+            oid=order.oid,
             buyer_id=order.buyer_id,
             seller_id=order.seller_id,
             driver_id=order.driver_id,
@@ -170,6 +173,7 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
             order=[
                 {
                     "order_id": order.id,
+                    "oid": order.oid,
                     "buyer_id": order.buyer_id,
                     "seller_id": order.seller_id,
                     "driver_id": order.driver_id,
@@ -198,6 +202,7 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
             order=[
                 {
                     "order_id": order.id,
+                    "oid": order.oid,
                     "buyer_id": order.buyer_id,
                     "seller_id": order.seller_id,
                     "driver_id": order.driver_id,
@@ -226,6 +231,7 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
             order=[
                 {
                     "order_id": order.id,
+                    "oid": order.oid,
                     "buyer_id": order.buyer_id,
                     "seller_id": order.seller_id,
                     "driver_id": order.driver_id,
@@ -266,6 +272,7 @@ def update_order_status(request: Request, OrderId: str, data: OrderUpdateStatusR
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             order_id=order.id,
+            oid=order.oid,
             buyer_id=order.buyer_id,
             seller_id=order.seller_id,
             driver_id=order.driver_id,
@@ -307,6 +314,7 @@ def update_order_status(request: Request, OrderId: str, data: OrderUpdateStatusR
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             order_id=order.id,
+            oid=order.oid,
             buyer_id=order.buyer_id,
             seller_id=order.seller_id,
             driver_id=order.driver_id,
@@ -340,6 +348,7 @@ def update_order_status(request: Request, OrderId: str, data: OrderUpdateStatusR
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
             order_id=order.id,
+            oid=order.oid,
             buyer_id=order.buyer_id,
             seller_id=order.seller_id,
             driver_id=order.driver_id,
