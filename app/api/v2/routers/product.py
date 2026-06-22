@@ -286,7 +286,12 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
         )
         products = db.execute(stmt).scalars().all()
         if not products:
-            raise APIException(404, "20001", "product not found")
+            return APIResponse(
+                status_code="00000",
+                message="success",
+                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                product=[]
+            )
         return APIResponse(
             status_code="00000",
             message="success",
@@ -328,7 +333,12 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
             )
             products = db.execute(stmt).scalars().all()
             if not products:
-                raise APIException(404, "20001", "product not found")
+                return APIResponse(
+                    status_code="00000",
+                    message="success",
+                    response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                    product=[]
+                )
             return APIResponse(
                 status_code="00000",
                 message="success",
@@ -367,7 +377,12 @@ def get_my_products(request: Request, db: Session = Depends(get_db)) -> dict:
             )
             products = db.execute(stmt).scalars().all()
             if not products:
-                raise APIException(404, "20001", "product not found")
+                return APIResponse(
+                    status_code="00000",
+                    message="success",
+                    response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                    product=[]
+                )
             return APIResponse(
                 status_code="00000",
                 message="success",

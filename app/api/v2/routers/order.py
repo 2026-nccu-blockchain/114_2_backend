@@ -155,6 +155,13 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
     payload = return_payload(request)
     if payload["role"] == "buyer":
         orders = db.query(Order).filter(Order.buyer_id == payload["id"]).all()
+        if not orders:
+            return APIResponse(
+                status_code="00000",
+                message="success",
+                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                order=[]
+            )
 
         return APIResponse(
             status_code="00000",
@@ -176,6 +183,13 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
         )
     elif payload["role"] == "seller":
         orders = db.query(Order).filter(Order.seller_id == payload["id"]).all()
+        if not orders:
+            return APIResponse(
+                status_code="00000",
+                message="success",
+                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                order=[]
+            )
 
         return APIResponse(
             status_code="00000",
@@ -197,6 +211,13 @@ def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
         )
     elif payload["role"] == "driver":
         orders = db.query(Order).filter(Order.driver_id == payload["id"]).all()
+        if not orders:
+            return APIResponse(
+                status_code="00000",
+                message="success",
+                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+                order=[]
+            )
 
         return APIResponse(
             status_code="00000",
