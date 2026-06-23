@@ -152,96 +152,145 @@ def get_order(request: Request, OrderId: str, db: Session = Depends(get_db)) -> 
         raise APIException(403, "00004", "forbidden")
 
 
+def serialize_order(order):
+    return {
+        "order_id": order.id,
+        "oid": order.oid,
+        "buyer_id": order.buyer_id,
+        "seller_id": order.seller_id,
+        "driver_id": order.driver_id,
+        "from_addr": order.from_address,
+        "to_addr": order.to_address,
+        "order_status": order.order_status.value,
+        "total_price": float(order.total_price)
+    }
+
 @router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
 def get_my_orders(request: Request, db: Session = Depends(get_db)) -> dict:
     verify_token(request)
     payload = return_payload(request)
     if payload["role"] == "buyer":
-        orders = db.query(Order).filter(Order.buyer_id == payload["id"]).all()
-        if not orders:
-            return APIResponse(
-                status_code="00000",
-                message="success",
-                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-                order=[]
-            )
+        ordered_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.ORDERED).all()
+        ordered_list = []
+        if ordered_orders:
+            for order in ordered_orders:
+                ordered_list.append(serialize_order(order))
+        success_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.SUCCESS).all()
+        success_list = []
+        if success_orders:
+            for order in success_orders:
+                success_list.append(serialize_order(order))
+        packed_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.PACKED).all()
+        packed_list = []
+        if packed_orders:
+            for order in packed_orders:
+                packed_list.append(serialize_order(order))
+        deliver_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.DELIVER).all()
+        deliver_list = []
+        if deliver_orders:
+            for order in deliver_orders:
+                deliver_list.append(serialize_order(order))
+        arrived_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.ARRIVED).all()
+        arrived_list = []
+        if arrived_orders:
+            for order in arrived_orders:
+                arrived_list.append(serialize_order(order))
+        refund_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.REFUND).all()
+        refund_list = []
+        if refund_orders:
+            for order in refund_orders:
+                refund_list.append(serialize_order(order))
+        fail_orders = db.query(Order).filter(Order.buyer_id == payload["id"], Order.order_status == OrderStatus.FAIL).all()
+        fail_list = []
+        if fail_orders:
+            for order in fail_orders:
+                fail_list.append(serialize_order(order))
 
         return APIResponse(
             status_code="00000",
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            order=[
-                {
-                    "order_id": order.id,
-                    "oid": order.oid,
-                    "buyer_id": order.buyer_id,
-                    "seller_id": order.seller_id,
-                    "driver_id": order.driver_id,
-                    "from_addr": order.from_address,
-                    "to_addr": order.to_address,
-                    "order_status": order.order_status.value,
-                    "total_price": float(order.total_price)
-                }
-                for order in orders
-            ]
+            ordered_order=ordered_list,
+            success_order=success_list,
+            packed_order=packed_list,
+            deliver_order=deliver_list,
+            arrived_order=arrived_list,
+            refund_order=refund_list,
+            fail_order=fail_list
         )
     elif payload["role"] == "seller":
-        orders = db.query(Order).filter(Order.seller_id == payload["id"]).all()
-        if not orders:
-            return APIResponse(
-                status_code="00000",
-                message="success",
-                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-                order=[]
-            )
+        ordered_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.ORDERED).all()
+        ordered_list = []
+        if ordered_orders:
+            for order in ordered_orders:
+                ordered_list.append(serialize_order(order))
+        success_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.SUCCESS).all()
+        success_list = []
+        if success_orders:
+            for order in success_orders:
+                success_list.append(serialize_order(order))
+        packed_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.PACKED).all()
+        packed_list = []
+        if packed_orders:
+            for order in packed_orders:
+                packed_list.append(serialize_order(order))
+        deliver_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.DELIVER).all()
+        deliver_list = []
+        if deliver_orders:
+            for order in deliver_orders:
+                deliver_list.append(serialize_order(order))
+        arrived_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.ARRIVED).all()
+        arrived_list = []
+        if arrived_orders:
+            for order in arrived_orders:
+                arrived_list.append(serialize_order(order))
+        refund_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.REFUND).all()
+        refund_list = []
+        if refund_orders:
+            for order in refund_orders:
+                refund_list.append(serialize_order(order))
+        fail_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.FAIL).all()
+        fail_list = []
+        if fail_orders:
+            for order in fail_orders:
+                fail_list.append(serialize_order(order))
 
         return APIResponse(
             status_code="00000",
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            order=[
-                {
-                    "order_id": order.id,
-                    "oid": order.oid,
-                    "buyer_id": order.buyer_id,
-                    "seller_id": order.seller_id,
-                    "driver_id": order.driver_id,
-                    "from_addr": order.from_address,
-                    "to_addr": order.to_address,
-                    "order_status": order.order_status.value,
-                    "total_price": float(order.total_price)
-                }
-                for order in orders
-            ]
+            ordered_order=ordered_list,
+            success_order=success_list,
+            packed_order=packed_list,
+            deliver_order=deliver_list,
+            arrived_order=arrived_list,
+            refund_order=refund_list,
+            fail_order=fail_list
         )
     elif payload["role"] == "driver":
-        orders = db.query(Order).filter(Order.driver_id == payload["id"]).all()
-        if not orders:
-            return APIResponse(
-                status_code="00000",
-                message="success",
-                response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-                order=[]
-            )
+        deliver_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.DELIVER).all()
+        deliver_list = []
+        if deliver_orders:
+            for order in deliver_orders:
+                deliver_list.append(serialize_order(order))
+        arrived_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.ARRIVED).all()
+        arrived_list = []
+        if arrived_orders:
+            for order in arrived_orders:
+                arrived_list.append(serialize_order(order))
+        refund_orders = db.query(Order).filter(Order.seller_id == payload["id"], Order.order_status == OrderStatus.REFUND).all()
+        refund_list = []
+        if refund_orders:
+            for order in refund_orders:
+                refund_list.append(serialize_order(order))
 
         return APIResponse(
             status_code="00000",
             message="success",
             response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-            order=[
-                {
-                    "order_id": order.id,
-                    "oid": order.oid,
-                    "buyer_id": order.buyer_id,
-                    "seller_id": order.seller_id,
-                    "driver_id": order.driver_id,
-                    "from_addr": order.from_address,
-                    "to_addr": order.to_address,
-                    "order_status": order.order_status.value,
-                    "total_price": float(order.total_price)
-                }
-                for order in orders
-            ]
+            deliver_order=deliver_list,
+            arrived_order=arrived_list,
+            refund_order=refund_list
         )
     else:
         raise APIException(403, "00004", "forbidden")

@@ -51,6 +51,13 @@ class APIResponse(BaseModel):
     url: Optional[str] = None
     cart: Optional[list] = None
     role: Optional[str] = None
+    ordered_order: Optional[list] = None
+    success_order: Optional[list] = None
+    packed_order: Optional[list] = None
+    deliver_order: Optional[list] = None
+    arrived_order: Optional[list] = None
+    refund_order: Optional[list] = None
+    fail_order: Optional[list] = None
 
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):
