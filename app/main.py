@@ -3,16 +3,31 @@ from fastapi import Request
 from datetime import datetime
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import pytz
 
 from app.api.v2.router import api_router
 from app.db.session import init_db
 from app.core.exceptions import APIException
 from app.schemas.common import ErrorResponse
+from app.core.middleware import CustomHeaderMiddleware, RateLimitMiddleware
 
 
 app = FastAPI(title="FastAPI SQLite Service")
 
+app.add_middleware(CustomHeaderMiddleware)
+app.add_middleware(
+    RateLimitMiddleware,
+    max_requests=10,
+    window_seconds=60
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 def on_startup() -> None:
