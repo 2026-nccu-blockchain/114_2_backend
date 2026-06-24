@@ -238,33 +238,64 @@ def delete_product_type(request: Request, ProductId: str, db: Session = Depends(
 
 
 @router.get("/product/{PId}", response_model=APIResponse, response_model_exclude_none=True)
-def get_product(PId: str, db: Session = Depends(get_db)) -> dict:
-    products = db.query(Product).options(joinedload(Product.seller)).filter(Product.pid == PId, Product.is_delete == False).all()
-    if not products:
-        raise APIException(404, "20001", "product not found")
+def get_product(request: Request, PId: str, db: Session = Depends(get_db)) -> dict:
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        products = db.query(Product).options(joinedload(Product.seller)).filter(Product.pid == PId, Product.is_delete == False).all()
+        if not products:
+            raise APIException(404, "20001", "product not found")
 
-    return APIResponse(
-        status_code="00000",
-        message="success",
-        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
-        product=[
-            {
-                "product_id": product.id,
-                "pid": product.pid,
-                "name": product.name,
-                "price": float(product.price),
-                "stock": product.stock,
-                "status": product.status,
-                "seller_id": product.seller_id,
-                "seller_name": product.seller.name,
-                "seller_company": product.seller.company_name,
-                "desc": product.desc,
-                "type": product.type,
-                "product_url": product.product_url
-            }
-            for product in products
-        ]
-    )
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            product=[
+                {
+                    "product_id": product.id,
+                    "pid": product.pid,
+                    "name": product.name,
+                    "price": float(product.price),
+                    "stock": product.stock,
+                    "status": product.status,
+                    "seller_id": product.seller_id,
+                    "seller_name": product.seller.name,
+                    "seller_company": product.seller.company_name,
+                    "desc": product.desc,
+                    "type": product.type,
+                    "product_url": product.product_url
+                }
+                for product in products
+            ]
+        )
+    verify_token(request)
+    payload = return_payload(request)
+    if payload["role"] == "buyer":
+        products = db.query(Product).options(joinedload(Product.seller)).filter(Product.pid == PId, Product.is_delete == False).all()
+        if not products:
+            raise APIException(404, "20001", "product not found")
+
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            product=[
+                {
+                    "product_id": product.id,
+                    "pid": product.pid,
+                    "name": product.name,
+                    "price": float(product.price),
+                    "stock": product.stock,
+                    "status": product.status,
+                    "seller_id": product.seller_id,
+                    "seller_name": product.seller.name,
+                    "seller_company": product.seller.company_name,
+                    "desc": product.desc,
+                    "type": product.type,
+                    "product_url": product.product_url
+                }
+                for product in products
+            ]
+        )
 
 
 @router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
