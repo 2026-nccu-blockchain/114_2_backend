@@ -15,7 +15,7 @@ ALLOWED_IMAGE_TYPES = [
 ]
 
 
-@router.post("/upload", response_model=APIResponse, response_model_exclude_none=True)
+@router.post("", response_model=APIResponse, response_model_exclude_none=True)
 async def handle_upload(request: Request, image: UploadFile):
     verify_token(request)
     if image.content_type not in ALLOWED_IMAGE_TYPES:
