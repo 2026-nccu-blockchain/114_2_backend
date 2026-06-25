@@ -11,15 +11,19 @@ from app.db.session import init_db
 from app.core.exceptions import APIException
 from app.schemas.common import ErrorResponse
 from app.core.middleware import CustomHeaderMiddleware, RateLimitMiddleware
+from app.core.config import settings
 
+
+MAX_REQUESTS=settings.max_requests
+WINDOW_SECONDS=settings.window_seconds
 
 app = FastAPI(title="FastAPI SQLite Service")
 
 app.add_middleware(CustomHeaderMiddleware)
 app.add_middleware(
     RateLimitMiddleware,
-    max_requests=10,
-    window_seconds=60
+    max_requests=MAX_REQUESTS,
+    window_seconds=WINDOW_SECONDS
 )
 app.add_middleware(
     CORSMiddleware,

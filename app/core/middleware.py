@@ -1,6 +1,6 @@
+from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request
-from app.core.exceptions import APIException
 from collections import defaultdict
 from datetime import datetime, timedelta
 import time
@@ -19,8 +19,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app,
-        max_requests: int = 10,
-        window_seconds: int = 60
+        max_requests: int,
+        window_seconds: int
     ):
         super().__init__(app)
         self.max_requests = max_requests
@@ -49,6 +49,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             else:
                 client["count"] += 1
                 if client["count"] > self.max_requests:
-                    raise APIException(429, "00007", "too many requests")
+                    return JSONResponse(
+                        status_code=429,
+                        content={
+                            "code": "00007",
+                            "message": "too many requests"
+                        }
+    )
 
         return await call_next(request)
