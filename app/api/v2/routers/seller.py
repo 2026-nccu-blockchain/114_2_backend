@@ -41,6 +41,7 @@ def get_seller_me(
         email=seller.email,
         phone=seller.phone,
         name=seller.name,
+        avatar_url=seller.avatar_url,
         company_address=seller.company_address,
         company_phone=seller.company_phone,
         company_name=seller.company_name,
@@ -72,6 +73,7 @@ def update_seller_me(
     seller.email = data.email
     seller.phone = data.phone
     seller.name = data.name
+    seller.avatar_url = data.avatar_url,
     seller.company_address = data.company_address
     seller.company_phone = data.company_phone
     seller.company_name = data.company_name
@@ -87,6 +89,7 @@ def update_seller_me(
         email=seller.email,
         phone=seller.phone,
         name=seller.name,
+        avatar_url=seller.avatar_url,
         company_address=seller.company_address,
         company_phone=seller.company_phone,
         company_name=seller.company_name,
