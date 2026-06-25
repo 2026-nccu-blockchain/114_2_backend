@@ -6,7 +6,8 @@ from app.core.exceptions import APIException
 from app.schemas.common import APIResponse
 from datetime import datetime, timedelta
 import re
-from app.core.jwt import create_access_token
+from app.core.jwt import create_access_token, decode_access_token
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.core.deps import verify_token, return_payload
 from app.schemas.auth import (
     LoginRequest,
@@ -20,6 +21,7 @@ from app.schemas.auth import (
 import pytz
 
 router = APIRouter()
+security = HTTPBearer()
 
 def is_strong_password(password: str) -> bool:
     if len(password) < 8:
@@ -252,8 +254,38 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
     )
 
 @router.post("/password/reset/me")
-def reset_password(data: PasswordResetRequest, db: Session = Depends(get_db)):
-    # TODO: auth 完成後，用 token 找目前登入使用者
+def reset_password(
+    data: PasswordResetRequest,
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+):
+    payload = decode_access_token(credentials.credentials)
+    user_id = payload.get("id")
+    role = payload.get("role")
+
+    if role == "buyer":
+        user = db.query(Buyer).filter(Buyer.id == user_id, Buyer.is_delete == False).first()
+    elif role == "seller":
+        user = db.query(Seller).filter(Seller.id == user_id, Seller.is_delete == False).first()
+    elif role == "driver":
+        user = db.query(Driver).filter(Driver.id == user_id, Driver.is_delete == False).first()
+    elif role == "admin":
+        user = db.query(Admin).filter(Admin.id == user_id).first()
+    else:
+        raise APIException(401, "10003", "invalid token")
+
+    if not user:
+        raise APIException(404, "10001", "user not found")
+
+    if not user.verify_password(data.old_password):
+        raise APIException(400, "10002", "invalid old password")
+
+    if not is_strong_password(data.new_password):
+        raise APIException(400, "10010", "password is not strong")
+
+    user.set_password(data.new_password)
+    db.commit()
+
     return APIResponse(
         status_code="00000",
         message="success",
