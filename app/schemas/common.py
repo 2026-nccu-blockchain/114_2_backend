@@ -37,6 +37,8 @@ class APIResponse(BaseModel):
     buyer_id: Optional[str] = None
     seller_id: Optional[str] = None
     driver_id: Optional[str] = None
+    seller_name: Optional[str] = None
+    seller_company: Optional[str] = None
     from_addr: Optional[str] = None
     to_addr: Optional[str] = None
     order_status: Optional[str] = None
@@ -48,6 +50,14 @@ class APIResponse(BaseModel):
     product_name: Optional[str] = None
     url: Optional[str] = None
     cart: Optional[list] = None
+    role: Optional[str] = None
+    ordered_order: Optional[list] = None
+    success_order: Optional[list] = None
+    packed_order: Optional[list] = None
+    deliver_order: Optional[list] = None
+    arrived_order: Optional[list] = None
+    refund_order: Optional[list] = None
+    fail_order: Optional[list] = None
 
 # 錯誤回應的格式 
 class ErrorResponse(BaseModel):

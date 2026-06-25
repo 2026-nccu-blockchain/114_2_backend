@@ -1,5 +1,4 @@
-from fastapi import APIRouter
-from fastapi import Depends
+from fastapi import APIRouter, Request, Depends
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.model import Admin, Buyer, Seller, Driver
@@ -9,6 +8,7 @@ from datetime import datetime, timedelta
 import re
 from app.core.jwt import create_access_token, decode_access_token
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.core.deps import verify_token, return_payload
 from app.schemas.auth import (
     LoginRequest,
     AdminRegisterRequest,
@@ -311,4 +311,16 @@ def forget_password(data: PasswordForgetRequest, db: Session = Depends(get_db)):
         status_code="00000",
         message="success",
         response_datetime=datetime.now(pytz.timezone('Asia/Taipei'))
+    )
+
+@router.get("/check", response_model=APIResponse, response_model_exclude_none=True)
+def check_role(request: Request, db: Session = Depends(get_db)) -> dict:
+    verify_token(request)
+    payload = return_payload(request)
+
+    return APIResponse(
+        status_code="00000",
+        message="success",
+        response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+        role=payload["role"]
     )
