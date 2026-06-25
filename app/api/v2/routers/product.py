@@ -296,6 +296,8 @@ def get_product(request: Request, PId: str, db: Session = Depends(get_db)) -> di
                 for product in products
             ]
         )
+    else:
+        raise APIException(403, "00004", "forbidden")
 
 
 @router.get("/me", response_model=APIResponse, response_model_exclude_none=True)
