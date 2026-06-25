@@ -125,7 +125,12 @@ def driver_look_orders(request: Request, db: Session = Depends(get_db)) -> dict:
         raise APIException(403, "00004", "forbidden")
     orders = db.query(Order).filter(Order.driver_id.is_(None), Order.order_status == OrderStatus.PACKED).all()
     if not orders:
-        raise APIException(404, "20004", "order not found")
+        return APIResponse(
+            status_code="00000",
+            message="success",
+            response_datetime=datetime.now(pytz.timezone('Asia/Taipei')),
+            order=[]
+        )
 
     return APIResponse(
         status_code="00000",
