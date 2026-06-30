@@ -5,4 +5,5 @@ from typing import Optional
 class DriverUpdateRequest(BaseModel):
     name: Optional[str] = None
     phone: Optional[str] = None
+    avatar_url: Optional[str] = None
     email: EmailStr

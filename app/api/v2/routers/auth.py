@@ -125,6 +125,8 @@ def buyer_register(data: BuyerRegisterRequest, db: Session = Depends(get_db)) ->
         phone=data.phone,
         address=data.address
     )
+    if data.avatar_url:
+        new_buyer.avatar_url = data.avatar_url
     new_buyer.set_password(data.password)
     db.add(new_buyer)
     db.commit()
@@ -185,6 +187,8 @@ def seller_register(data: SellerRegisterRequest, db: Session = Depends(get_db)) 
         company_phone=data.company_phone,
         company_address=data.company_address
     )
+    if data.avatar_url:
+        new_seller.avatar_url = data.avatar_url
     new_seller.set_password(data.password)
     db.add(new_seller)
     db.commit()
@@ -242,6 +246,8 @@ def driver_register(data: DriverRegisterRequest, db: Session = Depends(get_db)) 
         name=data.name,
         phone=data.phone
     )
+    if data.avatar_url:
+        new_driver.avatar_url = data.avatar_url
     new_driver.set_password(data.password)
     db.add(new_driver)
     db.commit()

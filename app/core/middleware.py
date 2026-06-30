@@ -55,6 +55,6 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                             "code": "00007",
                             "message": "too many requests"
                         }
-    )
+                    )
 
         return await call_next(request)

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -14,6 +15,7 @@ class BuyerRegisterRequest(BaseModel):
     password: str
     phone: str
     name: str
+    avatar_url: Optional[str] = None
     address: str
 
 class SellerRegisterRequest(BaseModel):
@@ -21,6 +23,7 @@ class SellerRegisterRequest(BaseModel):
     password: str
     phone: str
     name: str
+    avatar_url: Optional[str] = None
     company_address: str
     company_phone: str
     company_name: str
@@ -30,6 +33,7 @@ class DriverRegisterRequest(BaseModel):
     password: str
     phone: str
     name: str
+    avatar_url: Optional[str] = None
 
 class UserCreate(BaseModel):
     username: str

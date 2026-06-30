@@ -41,6 +41,7 @@ def get_buyer_me(
         email=buyer.email,
         phone=buyer.phone,
         name=buyer.name,
+        avatar_url=buyer.avatar_url,
         address=buyer.address,
     )
 
@@ -70,6 +71,7 @@ def update_buyer_me(
     buyer.email = data.email
     buyer.phone = data.phone
     buyer.name = data.name
+    buyer.avatar_url=data.avatar_url
     buyer.address = data.address
 
     db.commit()
@@ -83,6 +85,7 @@ def update_buyer_me(
         email=buyer.email,
         phone=buyer.phone,
         name=buyer.name,
+        avatar_url=buyer.avatar_url,
         address=buyer.address,
     )
 

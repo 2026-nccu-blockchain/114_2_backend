@@ -43,6 +43,7 @@ def get_driver_me(
         email=driver.email,
         phone=driver.phone,
         name=driver.name,
+        avatar_url=driver.avatar_url,
     )
 
 
@@ -71,6 +72,7 @@ def update_driver_me(
     driver.email = data.email
     driver.phone = data.phone
     driver.name = data.name
+    driver.avatar_url = data.avatar_url,
 
     db.commit()
     db.refresh(driver)
@@ -83,6 +85,7 @@ def update_driver_me(
         email=driver.email,
         phone=driver.phone,
         name=driver.name,
+        avatar_url=driver.avatar_url,
     )
 
 
